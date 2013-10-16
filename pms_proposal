@@ -1,0 +1,24 @@
+Chris Sparrow, Andrew DeChamplain, Jeff Chapman, Andrew Fleck
+
+Group B Final Project Proposal – A Reduced and Scaled Down Alternative to a Quadrocopter
+Our project will be a simplified patient monitoring system like one that would be used in a hospital. 
+There will be up to 3 Pi systems: one or two to gather data from the patient and send it to one acting 
+as a server. The server will run a GUI in Java to display information. If three Pi systems are being used, 
+the video and audio streaming will be the sole responsibility of one Pi. This project will require the 
+purchase of at least a camera, a microphone, a thermometer and a heart rate monitor.
+Some examples of information that will be gathered:
+•	Heart Rate, to be taken from a heart rate monitor
+•	Temperature
+•	A video feed of the patient
+•	Sound recording to listen to the patient
+Some examples of things that we want to monitor but could be economically prohibitive or just dumb:
+•	Blood pressure
+•	A button to be pressed by the patient when they require attention
+Milestones:
+•	Week of the 18th – The GUI for the server should be mapped out
+•	Week of the 25th – Sending of video and audio over a network should be researched and started
+•	Week of Nov. 8th – The Java server should be done, should have various parts for testing
+•	Week of Nov. 15th – Clients should be successfully transmitting temperature and heart rate to server, and displaying properly on the GUI
+•	Week of Nov. 22nd – Video and audio should be streaming in real time and displaying on GUI
+•	Week of Nov. 29th – Touching up GUI appearance, gravy, etc.
+*Milestones subject to change
