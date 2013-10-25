@@ -5,6 +5,8 @@
  *
  * Working on the video and audio next
  *
+ * Requires DigitalClock.java
+ *
  * @author (Jeff Chapman) 
  * @version (2.0.0)
  */
