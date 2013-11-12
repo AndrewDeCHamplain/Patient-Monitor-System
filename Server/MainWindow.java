@@ -109,11 +109,12 @@ private int warning = 0;
 	    {
 	    	if(warning == 0)
 	    	{
-	        pi_1.setBackground(connected);
-	        //pi_1.setText("safe");
-	    	}else if(warnings == )
+	        	pi_1.setBackground(connected);
+	        	//pi_1.setText("safe");
+	    	}else if(warnings == 1)
 	    	{
-	    		
+	    		Pi_1.setBackground(warning);
+	    		pi_1.setText("warning!");
 	    	}
 	    }
 	    if(x >= 2)
