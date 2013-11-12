@@ -1,49 +1,47 @@
-
 import java.net.*;
 import java.io.*;
 
 
-public class Setup extends MainWindow{
-	
-	static ServerSocket server;
-	public static SocketAddress connected;
-	
-	public static void main(String[] args)
-	{
-		Setup test = new Setup();
-		try {
-			test.setup();
-		} catch (IOException e) {
-			System.out.println("did not setup.");
-			e.printStackTrace();
-		}
-		
-	}
-	
-	public void setup() throws IOException
-	{
-		server = new ServerSocket(8081);
-		server.setReuseAddress(true);
-		
-		//Connect();
-		
-	}
-	
-	public static void Connect() throws IOException
-	{
-		Socket clientSocket = server.accept();
-		BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-		
-		connected = clientSocket.getLocalSocketAddress();
+public class Setup
+{        
+        static ServerSocket server;
+        static Socket client;
+        static PrintWriter out;
+        static BufferedReader in;
+        static MainWindow gui;
+        static Client patient;
+       // public static SocketAddress connected;
+        
+        public static void main(String[] args)
+        {
+        	gui = new MainWindow();
+        	try {
+                Connect();    
+                } catch (IOException e) {
+                        System.out.println("Lost connection");
+                        
+                        e.printStackTrace();
+                }
+        	System.exit(0);
+        }
+        
+        
+        public static void Connect() throws IOException
+        {
+        		server = new ServerSocket(8081);
+                client = server.accept();
+                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+                out = new PrintWriter(client.getOutputStream(), true);
+                out.println("Connected to server");
+                String fromClient;
 
-		while(in.readLine().equals("quit") == false)
-		{
-			PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
-			//processInput(in.readLine());
-			System.out.println(in.readLine());
-			out.println("Why hello there.");
-		}
-		
-	}
-	
+                while(!(fromClient = in.readLine()).equals("quit"))
+                {
+                        
+                        System.out.println(fromClient);
+                        out.println("received! from server");
+                }
+                System.out.println(fromClient);
+        }
+          
 }
