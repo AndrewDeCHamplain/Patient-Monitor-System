@@ -1,80 +1,49 @@
-import javax.swing.*;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.Calendar;
+import java.net.*;
+import java.io.*;
 
 
-@SuppressWarnings("serial")
-public class DigitalClock extends JPanel{
+public class Setup extends MainWindow{
+	
+	static ServerSocket server;
+	public static SocketAddress connected;
+	
+	public static void main(String[] args)
+	{
+		Setup test = new Setup();
+		try {
+			test.setup();
+		} catch (IOException e) {
+			System.out.println("did not setup.");
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public void setup() throws IOException
+	{
+		server = new ServerSocket(8081);
+		server.setReuseAddress(true);
+		
+		//Connect();
+		
+	}
+	
+	public static void Connect() throws IOException
+	{
+		Socket clientSocket = server.accept();
+		BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+		
+		connected = clientSocket.getLocalSocketAddress();
 
-    String stringTime;
-    int hour, minute, second;
-
-    String correctionHour = "";
-    String correctionMinute = "";
-    String correctionSecond = "";
-
-    public void setStringTime(String xyz) {
-        this.stringTime = xyz;
-    }
-
-    public int findMinimumBetweenTwoNumbers(int a, int b) {
-        return (a <= b) ? a : b;
-    }
-
-    DigitalClock() {
-
-        Timer t1 = new Timer(1000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-
-                repaint();
-            }
-        });
-        t1.start();
-    }
-
-    @Override
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-
-        Calendar now = Calendar.getInstance();
-        hour = now.get(Calendar.HOUR_OF_DAY);
-        minute = now.get(Calendar.MINUTE);
-        second = now.get(Calendar.SECOND);
-
-        if (hour < 10) {
-            this.correctionHour = "0";
-        }
-        if (hour >= 10) {
-            this.correctionHour = "";
-        }
-
-        if (minute < 10) {
-            this.correctionMinute = "0";
-        }
-        if (minute >= 10) {
-            this.correctionMinute = "";
-        }
-
-        if (second < 10) {
-            this.correctionSecond = "0";
-        }
-        if (second >= 10) {
-            this.correctionSecond = "";
-        }
-        setStringTime(correctionHour + hour + ":" + correctionMinute+ minute + ":" + correctionSecond + second);
-        g.setColor(Color.BLACK);
-        int length = findMinimumBetweenTwoNumbers(this.getWidth(),this.getHeight());
-        Font myFont = new Font("SansSerif", Font.PLAIN, length / 5);
-        g.setFont(myFont);
-        g.drawString(stringTime, (int) length/6, length/2);
-
-    }
-
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(200, 200);
-    }
-
+		while(in.readLine().equals("quit") == false)
+		{
+			PrintWriter out = new PrintWriter(clientSocket.getOutputStream());
+			//processInput(in.readLine());
+			System.out.println(in.readLine());
+			out.println("Why hello there.");
+		}
+		
+	}
+	
 }
