@@ -5,6 +5,10 @@ import java.net.URL;
 import javax.media.*;
 import javax.swing.*;
 
+
+
+//requires JMF library.
+
 @SuppressWarnings("serial")
 public class Video extends JPanel
 {
