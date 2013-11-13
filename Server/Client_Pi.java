@@ -2,7 +2,11 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URL;
 
+import javax.media.CannotRealizeException;
+import javax.media.NoPlayerException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -13,10 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JToggleButton;
 import javax.swing.WindowConstants;
 
+//import javax.media.*;
+
 
 @SuppressWarnings("serial")
 public class Client_Pi extends JFrame implements ActionListener{
 
+	private URL URL = null;
 	private JFrame Piframe_1;
 	private Container contentPanePi;
 	private JMenuItem quitItem1;
@@ -24,12 +31,13 @@ public class Client_Pi extends JFrame implements ActionListener{
 	private int t = 0;
 	private String Z;
 	
-	public Client_Pi(String z)
+	public Client_Pi(String z, URL ip) throws NoPlayerException, CannotRealizeException, IOException
 	{
+		URL = ip;
 		Z = z;
 		setWindow(z);
 	}
-	public void setWindow(String Z)
+	public void setWindow(String Z) throws NoPlayerException, CannotRealizeException, IOException
 	{
 		Piframe_1 = new JFrame("Client " + Z);
 	    contentPanePi = Piframe_1.getContentPane();
@@ -54,7 +62,7 @@ public class Client_Pi extends JFrame implements ActionListener{
 			}
 		});
 	    
-	    JPanel Pi_vid = new JPanel();
+	    Video Pi_vid = new Video(URL);
 	    Pi_vid.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 	    Pi_vid.setSize(720, 480);
 	    contentPanePi.add(Pi_vid);
@@ -84,9 +92,8 @@ public class Client_Pi extends JFrame implements ActionListener{
 	
 	public void ClearFrame()
 	{
-		contentPanePi.removeAll();
-		//contentPanePi.revalidate();
-		//contentPanePi.repaint();
+		Piframe_1.setVisible(false);
+		Piframe_1.dispose();
 	}
 	
 	
