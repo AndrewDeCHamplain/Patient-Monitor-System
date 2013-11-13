@@ -1,10 +1,15 @@
 import java.net.*;
 import java.io.*;
+import java.util.Random;
+
 
 
 public class Client {
+	
+		private static int bt = 37;
+		private double CurrentBt = 37;
         
-        static String IPaddress = "134.117.58.29";
+        static String IPaddress = "134.117.58.37";
         
         public static void main(String args[]) throws UnknownHostException, IOException
         {
@@ -13,19 +18,20 @@ public class Client {
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
                 
-                String fromServer, toServer;
+                @SuppressWarnings("unused")
+				String fromServer, toServer;
                 
                 while(true)
                 {
-                	System.out.println(fromServer = in.readLine());
-                	toServer = userIn.readLine();
-                	if (toServer != null) {
-                		System.out.println("Client: " + toServer);
-                		out.println(toServer);
-                	}
-                	if (toServer.equals("quit")) {
-                		break;
-                	}
+                        System.out.println(fromServer = in.readLine());
+                        toServer = userIn.readLine();
+                        if (toServer != null) {
+                                System.out.println("Client: " + toServer);
+                                out.println(toServer);
+                        }
+                        if (toServer.equals("quit")) {
+                                break;
+                        }
                 }
                 /*
                 if(client.isConnected())
@@ -37,6 +43,20 @@ public class Client {
                 }
                 */
                client.close();
+        }
+        
+        public double temperature()
+        {
+        	Random rand = new Random();
+        	int m = rand.nextInt(50);
+    		double d = m/100.0;
+        	if(bt > CurrentBt)
+        	{
+        		return CurrentBt = CurrentBt + d;
+        	}else
+        	{
+        		return CurrentBt = CurrentBt - d;
+        	}
         }
 
 }
