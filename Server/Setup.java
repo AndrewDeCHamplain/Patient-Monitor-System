@@ -9,39 +9,47 @@ public class Setup
         static PrintWriter out;
         static BufferedReader in;
         static MainWindow gui;
-        static Client patient;
+        private static String fromClient;
+        //static Client patient;
        // public static SocketAddress connected;
         
-        public static void main(String[] args)
+        public static void main(String[] args) throws MalformedURLException
         {
-        	gui = new MainWindow();
-        	try {
-                Connect();    
-                } catch (IOException e) {
-                        System.out.println("Lost connection");
-                        
-                        e.printStackTrace();
+                gui = new MainWindow();
+                while(true)
+                {
+                	try {
+                		Connect();    
+                	} catch (IOException e) {
+                			System.out.println("Lost connection");
+                			e.printStackTrace();
+                	}
                 }
-        	System.exit(0);
+                	//System.exit(0);
         }
         
         
         public static void Connect() throws IOException
         {
-        		server = new ServerSocket(8081);
+                        server = new ServerSocket(8081);
                 client = server.accept();
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 out = new PrintWriter(client.getOutputStream(), true);
                 out.println("Connected to server");
-                String fromClient;
-
-                while(!(fromClient = in.readLine()).equals("quit"))
-                {
-                        
-                        System.out.println(fromClient);
-                        out.println("received! from server");
-                }
-                System.out.println(fromClient);
+                Talk();
+                
+        }
+        
+        public static void Talk() throws IOException
+        {
+            while(!(fromClient = in.readLine()).equals("disconnect"))
+            {
+                    
+                    System.out.println(fromClient);
+                    out.println("received! from server");
+            }
+            System.out.println(fromClient);
+            
         }
           
 }
