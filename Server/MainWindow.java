@@ -18,13 +18,13 @@ private JButton Cpi_3;
 private JButton Cpi_4;
 
 
-private Client_Pi CC_1;
-private Client_Pi CC_2;
-private Client_Pi CC_3;
-private Client_Pi CC_4;
+private Client_Pi CC_1 = null;
+private Client_Pi CC_2 = null;
+private Client_Pi CC_3 = null;
+private Client_Pi CC_4 = null;
 
 private int q = 0;
-private int x = 0;    //setup number of connected clients
+private BitSet x;    //setup number of connected clients
 private Color unopened = Color.white;
 private Color connected = Color.green;
 private Color warn = Color.red;
@@ -35,6 +35,8 @@ private BitSet warning;
 		//setup the bits of warning. 0000
 		warning = new BitSet(3);
 		//warning.set(2, 4);    //testing the warnings
+		//setup connected pies. 0000
+		x = new BitSet(3);
 		
 		//setup the frame
 		JFrame frame = new JFrame("Server");
@@ -66,6 +68,24 @@ private BitSet warning;
 		frame.setResizable(false);
 		frame.setPreferredSize(new Dimension(900, 600));
 		frame.setVisible(true);		
+	}
+	
+	public Client_Pi ReturnClient(int p)
+	{
+		
+		if(p == 2)
+		{
+			return CC_2;
+		}else if(p == 3)
+		{
+			return CC_3;
+		}else if(p == 4)
+		{
+			return CC_4;
+		}else
+		{
+			return CC_1;
+		}
 	}
 	
 	public void setupMain()
@@ -108,7 +128,7 @@ private BitSet warning;
 	    warnings.add(Cpi_4);
 	    Cpi_4.addActionListener(this);
 	    Cpi_4.setBackground(unopened);
-	    if(x >= 1)
+	    if(x.get(0))
 	    {
 	    	if(!warning.get(0))
 	    	{
@@ -119,7 +139,7 @@ private BitSet warning;
 	    		Cpi_1.setText("warning!");
 	    	}
 	    }
-	    if(x >= 2)
+	    if(x.get(1))
 	    {
 	    	if(!warning.get(1))
 	    	{
@@ -131,7 +151,7 @@ private BitSet warning;
 	    	}
 	        
 	    }
-	    if(x >= 3)
+	    if(x.get(2))
 	    {
 	    	if(!warning.get(2))
 	    	{
@@ -142,7 +162,7 @@ private BitSet warning;
 	    		Cpi_3.setText("warning!");
 	    	}
 	    }
-	    if(x >= 4)
+	    if(x.get(3))
 	    {
 	    	if(!warning.get(3))
 	    	{
@@ -202,6 +222,35 @@ private BitSet warning;
 		
 	}
 	
+	public void DisconnectPi(int z)
+	{
+		if(z == 1)
+		{
+			CC_1.ClearFrame();
+			CC_1 = null;
+			x.set(0, false);
+			setupMain();
+		}else if(z == 2)
+		{
+			CC_2.ClearFrame();
+			CC_2 = null;
+			x.set(1, false);
+			setupMain();
+		}else if(z == 3)
+		{
+			CC_3.ClearFrame();
+			CC_3 = null;
+			x.set(2, false);
+			setupMain();
+		}else if(z == 4)
+		{
+			CC_4.ClearFrame();
+			CC_4 = null;
+			x.set(3, false);
+			setupMain();
+		}
+	}
+	
 	public void ReplacePi(int h)
 	{
 		String s = "" + h;
@@ -234,27 +283,28 @@ private BitSet warning;
 			//rest of connect stuff here
 			if(b.equals(Connect))
 			{
-				x += 1;
+				System.out.println(x.nextClearBit(3));
+				x.set(x.nextClearBit(0));
 				setupMain();
 				System.out.println("button pressed.");
-				if(x == 1)
+				if(x.get(0) && CC_1 == null)
 				{
 					//MainWindow test1 = new MainWindow();
 					//SetupPi_1();
 					SetupPi(1);
-				}else if(x == 2)
+				}else if(x.get(1) && CC_2 == null)
 				{
 					SetupPi(2);
 					//MainWindow test2 = new MainWindow();
 					//SetupPi_2();		
-				}else if(x == 3)
+				}else if(x.get(2) && CC_3 == null)
 				{
 					//warning.set(0, 2); 
 					//ReplacePi(1);    //testing reseting client 1		
-				}else
+				}else if(x.get(3) && CC_4 == null)
 				{
 					q = 1;
-					warning.set(0, 4); 
+					//warning.set(0, 4); 
 					setupMain();
 				}
 			}else if(b.equals(Cpi_1))  //if first client button
@@ -262,45 +312,63 @@ private BitSet warning;
 				System.out.println("pressed warning button 1.");
 				if(warning.get(0))   // and if warning is on
 				{
-					System.out.println("reseting");
+					System.out.println("resetting");
 					//reset warning
 					warning.clear(0);
 					//reset main window
 					setupMain();
+				}else if(!warning.get(0) && x.get(0))
+				{
+					System.out.println("Disconnecting pi #1");
+					DisconnectPi(1);
 				}
 			}else if(b.equals(Cpi_2))  //if second client button
 			{
 				System.out.println("pressed warning button 2.");
 				if(warning.get(1))   // and if warning is on
 				{
-					System.out.println("reseting");
+					System.out.println("resetting");
 					//reset warning
 					warning.clear(1);
 					//reset main window
 					setupMain();
+				}else if(!warning.get(1) && x.get(1))
+				{
+					System.out.println("Disconnecting pi #2");
+					DisconnectPi(2);
 				}
 			}else if(b.equals(Cpi_3))  //if third client button
 			{
 				System.out.println("pressed warning button 3.");
 				if(warning.get(2))   // and if warning is on
 				{
-					System.out.println("reseting");
+					System.out.println("resetting");
 					//reset warning
 					warning.clear(2);
 					//reset main window
 					setupMain();
+				}else if(!warning.get(2) && x.get(2))
+				{
+					System.out.println("Disconnecting pi #3");
+					DisconnectPi(3);
 				}
 			}else if(b.equals(Cpi_4))  //if fourth client button
 			{
+
 				System.out.println("pressed warning button 4.");
 				if(warning.get(3))   // and if warning is on
 				{
-					System.out.println("reseting");
+					System.out.println("resetting");
 					//reset warning
 					warning.clear(3);
 					//reset main window
 					setupMain();
+				}else if(!warning.get(3) && x.get(3))
+				{
+					System.out.println("Disconnecting pi #4");
+					DisconnectPi(4);
 				}
+				
 			}
 			
 		}
