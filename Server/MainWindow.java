@@ -1,6 +1,11 @@
 import java.awt.*;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.*;
 
+import javax.media.CannotRealizeException;
+import javax.media.NoPlayerException;
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -22,6 +27,10 @@ private Client_Pi CC_1 = null;
 private Client_Pi CC_2 = null;
 private Client_Pi CC_3 = null;
 private Client_Pi CC_4 = null;
+private URL URL_1 = null;
+private URL URL_2 = null;
+private URL URL_3 = null;
+private URL URL_4 = null;
 
 private int q = 0;
 private BitSet x;    //setup number of connected clients
@@ -30,8 +39,10 @@ private Color connected = Color.green;
 private Color warn = Color.red;
 private BitSet warning;
 
-	public MainWindow()
+	public MainWindow() throws MalformedURLException
 	{
+		URL_1 = new URL("http://10.0.0.24:8080");
+		URL_2 = new URL("http://10.0.0.24:8081");
 		//setup the bits of warning. 0000
 		warning = new BitSet(3);
 		//warning.set(2, 4);    //testing the warnings
@@ -181,7 +192,7 @@ private BitSet warning;
 	    }
 	}
 	
-	public void Set_Warnings(BitSet W)
+	public void Set_Warnings(BitSet W) throws NoPlayerException, CannotRealizeException, IOException
 	{
 		warning.and(W);
 		setupMain();
@@ -202,22 +213,22 @@ private BitSet warning;
 	}
 	
 	
-	public void SetupPi(int z)
+	public void SetupPi(int z) throws NoPlayerException, CannotRealizeException, IOException
 	{
 		String l = "" + z;
 		System.out.println(l);
 		if(z == 1)
 		{
-			CC_1 = new Client_Pi(l);
+			CC_1 = new Client_Pi(l, URL_1);
 		}else if(z == 2)
 		{
-			CC_2 = new Client_Pi(l);
+			CC_2 = new Client_Pi(l, URL_2);
 		}else if(z == 3)
 		{
-			CC_3 = new Client_Pi(l);
+			CC_3 = new Client_Pi(l, URL_3);
 		}else if(z == 4)
 		{
-			CC_4 = new Client_Pi(l);
+			CC_4 = new Client_Pi(l, URL_4);
 		}
 		
 	}
@@ -251,7 +262,7 @@ private BitSet warning;
 		}
 	}
 	
-	public void ReplacePi(int h)
+	public void ReplacePi(int h) throws NoPlayerException, CannotRealizeException, IOException
 	{
 		String s = "" + h;
 		System.out.println(s);
@@ -291,10 +302,28 @@ private BitSet warning;
 				{
 					//MainWindow test1 = new MainWindow();
 					//SetupPi_1();
-					SetupPi(1);
+					
+					try {
+						SetupPi(1);
+					} catch (NoPlayerException e1) {
+						e1.printStackTrace();
+					} catch (CannotRealizeException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
+					
 				}else if(x.get(1) && CC_2 == null)
 				{
-					SetupPi(2);
+					try {
+						SetupPi(2);
+					} catch (NoPlayerException e1) {
+						e1.printStackTrace();
+					} catch (CannotRealizeException e1) {
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 					//MainWindow test2 = new MainWindow();
 					//SetupPi_2();		
 				}else if(x.get(2) && CC_3 == null)
