@@ -1,0 +1,44 @@
+SYSC 3010 Group B Meeting
+
+November 6, 2013
+
+
+Meeting called to order at 2:30pm by scheduled lab time.
+
+ 
+
+Members Present:    
+
+Andrew DeChamplain, Jeff Chapman, Chris Sparrow, Andrew Fleck
+
+ 
+
+Members not present:
+
+none
+
+Where we are:
+
+- USB camera has been picked up and Jeff has begun to experiment with recieving and sending
+  the video data.
+- The GUI has been mapped and designed.
+
+Discussed:
+
+- How to allow multiple video streams to the GUI.
+- What language to code the server in based on our GUI being in Java. (Should server also be
+  java or python or jython)
+
+ 
+Business:
+
+Motion: When the GUI needs to open multiple video streams from the patients, to create new 
+windows instead of resizing the current GUI. (purely aesthetics desission)
+
+Vote: 4 for, 0 opposed
+
+Resolved: Motion carried
+
+
+
+Meeting adjourned at 4:30pm.

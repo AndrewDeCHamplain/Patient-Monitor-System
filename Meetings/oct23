@@ -1,0 +1,39 @@
+SYSC 3010 Group B Meeting
+
+October 23, 2013
+
+
+Meeting called to order at 2:30pm by scheduled lab time.
+
+ 
+
+Members Present:    
+
+Andrew DeChamplain, Jeff Chapman, Chris Sparrow, Andrew Fleck
+
+ 
+
+Members not present:
+
+none
+
+
+Discussed:
+
+- Comments from peers given after our presentation.
+- Will constantly streaming all patients connected to server at the same time be too much for 
+  the bus to handle? Could cause poor video fps.
+- System design must be completed.
+
+
+Business:
+
+Motion: Only stream video when patient has called for assistance or have critical vitals.
+
+Vote: 4 for, 0 opposed
+
+Resolved: Motion carried
+
+
+
+Meeting adjourned at 4:30pm.

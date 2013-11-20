@@ -1,0 +1,45 @@
+MORE INFO http://www.linuxcircle.com/2013/02/06/faster-video-streaming-on-raspberry-media-server-with-mjpg-streamer/
+http://skillfulness.blogspot.ca/2010/03/mjpg-streamer-documentation.html
+
+
+SHAMELESSLY LIFTED FROM http://www.raspberrypi.org/phpBB3/viewtopic.php?p=164539#p164539 USER: CrystalCowboy. Modified the repo location for pulling mjpg streamer source code to the newest repo
+
+On Raspbian (wheezy), here is how you can compile it. First, load some packages you will need.
+sudo apt-get update
+sudo apt-get install subversion
+sudo apt-get install libv4l-dev
+sudo apt-get install libjpeg8-dev
+sudo apt-get install imagemagick
+
+Subversion is software for downloading versioned software, it is used a lot by Open Source developers.
+libv4l-dev and libjpeg8-dev are required dependencies.
+ImageMagick will be needed for the installation, since it is used to process some image files during the compilation. (This is a bad move by the developers, IMHO).
+
+Now to do the compilation (as root, or sudo):
+sudo svn co https://svn.code.sf.net/p/mjpg-streamer/code/mjpg-streamer/ mjpg-streamer
+cd mjpg-streamer/
+sudo make USE_LIBV4L2=true clean all
+sudo make DESTDIR=/usr install
+
+That should do it. To run mjpg-streamer, make sure no other processes are tying up the webcam, then it's something like this:
+LD_LIBRARY_PATH=/usr/local/lib mjpg_streamer -i "input_uvc.so -d /dev/video0 -r 320x240 -f 20 /tmp/stream -n pic.jpg" -o "output_http.so -w /usr/local/www"
+
+Input modifiers:
+-d specifies the device
+-r is resolution
+-f is frame rate
+-y specifies YUYV format, rather than MJPEG format.
+
+Output modifiers:
+-p is port
+-w is web serving directory.
+See the documentation for more details.
+
+Mjpg-streamer includes a lightweight web server, so you will not need to run apache or lighttpd. I think this is a wrong idea, but there it is.
+
+A typical line in the html file for displaying an image stream looks like this:
+<img src="http://192.168.0.63:8090/?action=stream" width="752">
+The port here should match the port specified in the mjpg-streamer command.
+Some webcams will deliver MJPEG images. Mjpg-streamer is very efficient with these webcams, as it just reads the images and streams them to the web. I am seeing CPU usage of ~ 1% with a 640x360 resolution MJPEG image.
+If you camera does not deliver MJPEG, you can probably still read it with the YUYV format, but there is more CPU overhead, because the software must read the YUYV and convert it to MJPEG in order to stream it.
+If you don't know what formats your webcam delivers, try experimenting with fswebcamin "--verbose" mode. I found fswebcam to very useful for characterizing my cameras, and figuring out which resolutions they will serve. fswebcam reads an image from a webcam and writes it to a file. You can then see under what conditions it failed, and whether the files are garbled or not. (Files may be garbled if the resolution is somehow screwed up.) Fswebcam is available on both Arch and Wheezy as a package.

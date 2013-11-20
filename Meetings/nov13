@@ -1,0 +1,34 @@
+SYSC 3010 Group B Meeting
+
+November 13, 2013
+
+
+Meeting called to order at 2:30pm by scheduled lab time.
+
+ 
+
+Members Present:
+
+Andrew DeChamplain, Jeff Chapman, Chris Sparrow, Andrew Fleck
+
+ 
+
+Members not present:
+
+none
+
+
+Where we are:
+
+- USB camera streaming video to a server but has no audio.
+- The GUI is working and can toggle windows that will hold each video/audio stream. 
+
+Discussed:
+
+- Using mjpg-streamer with ffmjpg-streamer to capture the video/audio and send to the server 
+  to be displayed on the server.
+- Add temperature and heartrate from the client to the server with parsing statements.
+- Fix bugs in server.
+
+
+Meeting adjourned at 4:30pm.
