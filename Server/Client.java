@@ -7,21 +7,24 @@ import java.util.Random;
 public class Client {
 	
 		private static int bt = 37;
-		private double CurrentBt = 37;
+		private static double CurrentBt = 37;
+		private static PrintWriter out;
         
-        static String IPaddress = "134.117.58.37";
+        static String IPaddress;
+        //"134.117.58.12"
         
         public static void main(String args[]) throws UnknownHostException, IOException
         {
+        		IPaddress = args[0];
                 Socket client = new Socket(IPaddress, 8081);
-                PrintWriter out = new PrintWriter(client.getOutputStream(), true);
+                out = new PrintWriter(client.getOutputStream(), true);
                 BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
                 
                 @SuppressWarnings("unused")
 				String fromServer, toServer;
                 
-                while(true)
+                while(client.isConnected())
                 {
                         System.out.println(fromServer = in.readLine());
                         toServer = userIn.readLine();
@@ -29,10 +32,17 @@ public class Client {
                                 System.out.println("Client: " + toServer);
                                 out.println(toServer);
                         }
-                        if (toServer.equals("quit")) {
+                        if (toServer.equals("disconnect")) {
                                 break;
                         }
+                        if(toServer.equals("temp"))
+                        {
+                        	sendTemp(50);
+                        }
                 }
+                out.println("&discon&");
+                client.close();
+                System.out.println("Client was disconnected");
                 /*
                 if(client.isConnected())
                 {
@@ -45,7 +55,7 @@ public class Client {
                client.close();
         }
         
-        public double temperature()
+        public static double temperature()
         {
         	Random rand = new Random();
         	int m = rand.nextInt(50);
@@ -57,6 +67,15 @@ public class Client {
         	{
         		return CurrentBt = CurrentBt - d;
         	}
+        }
+        
+        public static void sendTemp(int n)
+        {
+        	for(int i = n;i > 0; i--)
+        	{
+        		out.println("" + temperature());
+        	}
+        	
         }
 
 }
