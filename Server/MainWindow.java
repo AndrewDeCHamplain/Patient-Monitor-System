@@ -1,7 +1,6 @@
+
 import java.awt.*;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.*;
 
 import javax.media.CannotRealizeException;
@@ -27,10 +26,10 @@ private Client_Pi CC_1 = null;
 private Client_Pi CC_2 = null;
 private Client_Pi CC_3 = null;
 private Client_Pi CC_4 = null;
-private URL URL_1 = null;
-private URL URL_2 = null;
-private URL URL_3 = null;
-private URL URL_4 = null;
+private String URL_1 = null;
+private String URL_2 = null;
+private String URL_3 = null;
+private String URL_4 = null;
 
 private int q = 0;
 private BitSet x;    //setup number of connected clients
@@ -39,10 +38,11 @@ private Color connected = Color.green;
 private Color warn = Color.red;
 private BitSet warning;
 
-	public MainWindow() throws MalformedURLException
+	public MainWindow()
 	{
-		URL_1 = new URL("http://10.0.0.24:8080");
-		URL_2 = new URL("http://10.0.0.24:8081");
+		URL_1 = "http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg";
+		URL_3 = "http://10.0.0.24:8080";
+		URL_4 = "http://10.0.0.24:8081";
 		//setup the bits of warning. 0000
 		warning = new BitSet(3);
 		//warning.set(2, 4);    //testing the warnings
@@ -81,24 +81,6 @@ private BitSet warning;
 		frame.setVisible(true);		
 	}
 	
-	public Client_Pi ReturnClient(int p)
-	{
-		
-		if(p == 2)
-		{
-			return CC_2;
-		}else if(p == 3)
-		{
-			return CC_3;
-		}else if(p == 4)
-		{
-			return CC_4;
-		}else
-		{
-			return CC_1;
-		}
-	}
-	
 	public void setupMain()
 	{
 		//used to reset the board once a pi is connected
@@ -123,6 +105,7 @@ private BitSet warning;
 	    warnings.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 	    warnings.setLayout(new GridLayout(2,2));
 	    
+	    //setup the client's connection buttons
 	    Cpi_1 = new JButton("Off");
 	    warnings.add(Cpi_1);
 	    Cpi_1.addActionListener(this);
@@ -139,6 +122,9 @@ private BitSet warning;
 	    warnings.add(Cpi_4);
 	    Cpi_4.addActionListener(this);
 	    Cpi_4.setBackground(unopened);
+	    //if a client is connected, change the background and label based on it's state
+	    //warnings turn it red with "warning" on the label.
+	    //connections turn it green with "safe" on the label.
 	    if(x.get(0))
 	    {
 	    	if(!warning.get(0))
@@ -186,13 +172,16 @@ private BitSet warning;
 	    }
 	    //add the warnings to the pane
 	    contentPane.add(warnings);
+	    //if 4 clients are connected, then disable the connect button.
 	    if(q == 1)
 	    {
 	    	Connect.setEnabled(false);
 	    }
 	}
 	
-	public void Set_Warnings(BitSet W) throws NoPlayerException, CannotRealizeException, IOException
+	//set the designated client's warning status 
+	//should eventually focus on that pi's video
+	public void Set_Warnings(BitSet W) throws NoPlayerException, CannotRealizeException, IOException 
 	{
 		warning.and(W);
 		setupMain();
@@ -212,7 +201,7 @@ private BitSet warning;
 		
 	}
 	
-	
+	//create a new client_pi up to a max of 4.
 	public void SetupPi(int z) throws NoPlayerException, CannotRealizeException, IOException
 	{
 		String l = "" + z;
@@ -220,9 +209,11 @@ private BitSet warning;
 		if(z == 1)
 		{
 			CC_1 = new Client_Pi(l, URL_1);
+			Setup.Connect(z, CC_1);
 		}else if(z == 2)
 		{
 			CC_2 = new Client_Pi(l, URL_2);
+			Setup.Connect(z, CC_2);
 		}else if(z == 3)
 		{
 			CC_3 = new Client_Pi(l, URL_3);
@@ -233,8 +224,10 @@ private BitSet warning;
 		
 	}
 	
-	public void DisconnectPi(int z)
+	//disconnect the designated pi. 
+	public void DisconnectPi(int z) throws IOException
 	{
+		//clear client's frame, set client to null and reset main window
 		if(z == 1)
 		{
 			CC_1.ClearFrame();
@@ -243,6 +236,7 @@ private BitSet warning;
 			setupMain();
 		}else if(z == 2)
 		{
+			
 			CC_2.ClearFrame();
 			CC_2 = null;
 			x.set(1, false);
@@ -262,6 +256,8 @@ private BitSet warning;
 		}
 	}
 	
+	//clears the frame of the client
+	//used to clear or set the warning response
 	public void ReplacePi(int h) throws NoPlayerException, CannotRealizeException, IOException
 	{
 		String s = "" + h;
@@ -285,24 +281,24 @@ private BitSet warning;
 		}
 	}
 	
+	//when a button is pressed
 	public void actionPerformed(ActionEvent e) {
 		Object o = e.getSource();
 		
+		//if it is a jbutton (ie everything that can be pressed)
 		if(o instanceof JButton)
 		{
-			JButton b = (JButton)o; // if we want to use more than one button
-			//rest of connect stuff here
+			JButton b = (JButton)o; 
+			//if it is the connect button
 			if(b.equals(Connect))
-			{
+			{	
+				//connect a new client
 				System.out.println(x.nextClearBit(3));
 				x.set(x.nextClearBit(0));
 				setupMain();
 				System.out.println("button pressed.");
 				if(x.get(0) && CC_1 == null)
 				{
-					//MainWindow test1 = new MainWindow();
-					//SetupPi_1();
-					
 					try {
 						SetupPi(1);
 					} catch (NoPlayerException e1) {
@@ -323,15 +319,15 @@ private BitSet warning;
 						e1.printStackTrace();
 					} catch (IOException e1) {
 						e1.printStackTrace();
-					}
-					//MainWindow test2 = new MainWindow();
-					//SetupPi_2();		
+					}	
 				}else if(x.get(2) && CC_3 == null)
 				{
+					//connection for client 3
 					//warning.set(0, 2); 
 					//ReplacePi(1);    //testing reseting client 1		
 				}else if(x.get(3) && CC_4 == null)
 				{
+					//connection for client 4
 					q = 1;
 					//warning.set(0, 4); 
 					setupMain();
@@ -349,7 +345,11 @@ private BitSet warning;
 				}else if(!warning.get(0) && x.get(0))
 				{
 					System.out.println("Disconnecting pi #1");
-					DisconnectPi(1);
+					try {
+						DisconnectPi(1);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}else if(b.equals(Cpi_2))  //if second client button
 			{
@@ -363,8 +363,13 @@ private BitSet warning;
 					setupMain();
 				}else if(!warning.get(1) && x.get(1))
 				{
+					//if warning is not on, then disconnect
 					System.out.println("Disconnecting pi #2");
-					DisconnectPi(2);
+					try {
+						DisconnectPi(2);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}else if(b.equals(Cpi_3))  //if third client button
 			{
@@ -378,8 +383,13 @@ private BitSet warning;
 					setupMain();
 				}else if(!warning.get(2) && x.get(2))
 				{
+					//if warning is not on, then disconnect
 					System.out.println("Disconnecting pi #3");
-					DisconnectPi(3);
+					try {
+						DisconnectPi(3);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 			}else if(b.equals(Cpi_4))  //if fourth client button
 			{
@@ -394,8 +404,13 @@ private BitSet warning;
 					setupMain();
 				}else if(!warning.get(3) && x.get(3))
 				{
+					//if warning is not on, then disconnect
 					System.out.println("Disconnecting pi #4");
-					DisconnectPi(4);
+					try {
+						DisconnectPi(4);
+					} catch (IOException e1) {
+						e1.printStackTrace();
+					}
 				}
 				
 			}
