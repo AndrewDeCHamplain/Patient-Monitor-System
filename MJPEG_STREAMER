@@ -5,20 +5,21 @@ http://skillfulness.blogspot.ca/2010/03/mjpg-streamer-documentation.html
 SHAMELESSLY LIFTED FROM http://www.raspberrypi.org/phpBB3/viewtopic.php?p=164539#p164539 USER: CrystalCowboy. Modified the repo location for pulling mjpg streamer source code to the newest repo
 
 On Raspbian (wheezy), here is how you can compile it. First, load some packages you will need.
-apt-get install subversion
-apt-get install libv4l-dev
-apt-get install libjpeg8-dev
-apt-get install imagemagick
+sudo apt-get update
+sudo apt-get install subversion
+sudo apt-get install libv4l-dev
+sudo apt-get install libjpeg8-dev
+sudo apt-get install imagemagick
 
 Subversion is software for downloading versioned software, it is used a lot by Open Source developers.
 libv4l-dev and libjpeg8-dev are required dependencies.
 ImageMagick will be needed for the installation, since it is used to process some image files during the compilation. (This is a bad move by the developers, IMHO).
 
 Now to do the compilation (as root, or sudo):
-svn co https://svn.code.sf.net/p/mjpg-streamer/code/mjpg-streamer/ mjpg-streamer
+sudo svn co https://svn.code.sf.net/p/mjpg-streamer/code/mjpg-streamer/ mjpg-streamer
 cd mjpg-streamer/
-make USE_LIBV4L2=true clean all
-make DESTDIR=/usr install
+sudo make USE_LIBV4L2=true clean all
+sudo make DESTDIR=/usr install
 
 That should do it. To run mjpg-streamer, make sure no other processes are tying up the webcam, then it's something like this:
 LD_LIBRARY_PATH=/usr/local/lib mjpg_streamer -i "input_uvc.so -d /dev/video0 -r 320x240 -f 20 /tmp/stream -n pic.jpg" -o "output_http.so -w /usr/local/www"
