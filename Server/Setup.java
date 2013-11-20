@@ -1,55 +1,74 @@
-import java.net.*;
+
 import java.io.*;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 
 public class Setup
 {        
-        static ServerSocket server;
-        static Socket client;
-        static PrintWriter out;
-        static BufferedReader in;
-        static MainWindow gui;
-        private static String fromClient;
-        //static Client patient;
-       // public static SocketAddress connected;
+		private MainWindow gui;
+        private static ServerSocket server;
+        private static Socket client;
+        private static Socket client_1;
+        private static Socket client_2;
+        private static Socket client_3;
+        private static Socket client_4;
+
+ 
         
-        public static void main(String[] args) throws MalformedURLException
+        public static void main(String[] args) throws IOException
         {
-                gui = new MainWindow();
-                while(true)
-                {
-                	try {
-                		Connect();    
-                	} catch (IOException e) {
-                			System.out.println("Lost connection");
-                			e.printStackTrace();
-                	}
-                }
-                	//System.exit(0);
+                @SuppressWarnings("unused")
+				Setup hub = new Setup();
         }
         
-        
-        public static void Connect() throws IOException
+        public Setup() throws IOException
         {
-                        server = new ServerSocket(8081);
-                client = server.accept();
-                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                out = new PrintWriter(client.getOutputStream(), true);
-                out.println("Connected to server");
-                Talk();
-                
+        	gui = new MainWindow();
+        	server = new ServerSocket(8081);
         }
         
-        public static void Talk() throws IOException
+        public static void Connect(int i, Client_Pi who) throws IOException
         {
-            while(!(fromClient = in.readLine()).equals("disconnect"))
-            {
-                    
-                    System.out.println(fromClient);
-                    out.println("received! from server");
-            }
-            System.out.println(fromClient);
-            
+
+        	client = server.accept();
+        	if(i == 2)
+        	{
+        		client_2 = client;
+        	}else if(i == 3)
+        	{
+        		client_3 = client;
+        	}else if(i == 4)
+        	{
+        		client_4 = client;
+        	}else
+        	{
+            	client_1 = client;
+        	}
+        	new ClientThread(client, i, who).start();
+        	/*
+            ConnectedToWho(i).setSocket(server.accept());
+            in = new BufferedReader(new InputStreamReader(ConnectedToWho(i).GetSocket().getInputStream()));
+            out = new PrintWriter(ConnectedToWho(i).GetSocket().getOutputStream(), true);
+            out.println("Connected to server");
+                    */
         }
-          
+        
+        public static void disconnect(int i) throws IOException
+        {
+        	if(i == 2)
+        	{
+        		client_2.close();
+        	}else if(i == 3)
+        	{
+        		client_3.close();
+        	}else if(i == 4)
+        	{
+        		client_4.close();
+        	}else
+        	{
+            	client_1.close();
+        	}
+        }
+        
 }
