@@ -1,18 +1,32 @@
-import java.awt.*;
-import java.io.IOException;
-import java.net.URL;
+import java.awt.BorderLayout;
 
-import javax.media.*;
-import javax.swing.*;
+import javax.swing.JPanel;
 
-
-
-//requires JMF library.
+import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 @SuppressWarnings("serial")
 public class Video extends JPanel
 {
+	private EmbeddedMediaPlayerComponent mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
 	
+	public Video(String url)
+	{
+		setLayout(new BorderLayout());
+		mediaPlayerComponent.getMediaPlayer().prepareMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
+		add(mediaPlayerComponent, BorderLayout.CENTER);
+	}
+	
+	public void play()
+	{
+		mediaPlayerComponent.getMediaPlayer().start();
+	}
+	
+	public void pause()
+	{
+		mediaPlayerComponent.getMediaPlayer().stop();
+	}
+	
+	/*
 	private Player audioPlayer = null;
 	
 	public Video(URL url) throws NoPlayerException, CannotRealizeException, IOException
@@ -28,5 +42,11 @@ public class Video extends JPanel
 		
 		Component vid = audioPlayer.getVisualComponent();
 		add(vid, BorderLayout.CENTER);
+	}
+	*/
+	
+	public void closeVideo()
+	{
+		mediaPlayerComponent.release();
 	}
 }
