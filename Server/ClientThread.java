@@ -29,54 +29,45 @@ public class ClientThread extends Thread{
 	
 	public void run()
 	{
-		try {
-			fromClient = in.readLine();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-		if(!fromClient.equals("disconnect"))
-			{
-				System.out.println(fromClient);
-				who.setText(fromClient);
-				out.println("received " + fromClient + " from server");
-				try {
-					recieve();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				//out.flush();
-			}else {
-				try {
-					disconnect();
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		//}
-		
+			try {
+				receive();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}		
 	}
 	
-	public void recieve() throws IOException
+	//a loop to keep receiving
+	public void receive() throws IOException
 	{
-		while(!(fromClient = in.readLine()).equals("&discon&"))
+		fromClient = in.readLine();
+		//setup delimiter
+		String delims = " &";
+		String[] tokens = fromClient.split(delims);
+		//check if it equals the disconnect command
+		while(!(fromClient).equals("discon"))
 		{
-			if(fromClient.equals("temp"))
+			
+			if(tokens[0].equals("temp"))
 			{
-				while(!(fromClient.equals("&Done&")))
-				{
-					who.setText(fromClient);
-				}
+				//if it is a temp, set the new temp
+				who.setText(tokens[1]);
+				//get next string
+				fromClient = in.readLine();
+				tokens = fromClient.split(delims);
+			}
+			if(tokens[0].equals("hr"))
+			{
+				//if it is the heart rate, set the new heart rate
+				who.setText(tokens[1]);
+				//get the next string
+				fromClient = in.readLine();
+				tokens = fromClient.split(delims);
 			}
 		}	
 		disconnect();
 	}
 	
-	
-	public Client_Pi WhoIsIt()
-	{
-		return who;
-	}
-	
+	//disconnects the client and closes the frame
 	public void disconnect() throws IOException
 	{
 		in.close();
