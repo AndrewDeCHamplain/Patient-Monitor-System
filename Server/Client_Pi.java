@@ -5,18 +5,15 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
 
-import javax.media.CannotRealizeException;
-import javax.media.NoPlayerException;
+//import javax.media.CannotRealizeException;
+//import javax.media.NoPlayerException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.WindowConstants;
+//import javax.swing.WindowConstants;
 
 
 //import javax.media.*;
@@ -38,14 +35,14 @@ public class Client_Pi extends JFrame implements ActionListener{
 	private Socket socket;
 	private int n;
 	
-	public Client_Pi(String z, String ip) throws NoPlayerException, CannotRealizeException, IOException
+	public Client_Pi(String z, String ip) //throws NoPlayerException, CannotRealizeException, IOException
 	{
 		n = Integer.parseInt(z);
 		URL = ip;
 		Z = z;
 		setWindow(z);
 	}
-	public void setWindow(String Z) throws NoPlayerException, CannotRealizeException, IOException
+	public void setWindow(String Z) //throws NoPlayerException, CannotRealizeException, IOException
 	{
 		Piframe_1 = new JFrame("Client " + Z);
 	    contentPanePi = Piframe_1.getContentPane();
