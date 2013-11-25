@@ -19,6 +19,8 @@ public class Client {
         public static void main(String args[]) throws UnknownHostException, IOException
         {
                 IPaddress = args[0];
+                Client c = new Client(IPaddress);
+                /*
                 Socket client = new Socket(IPaddress, 8081);
                 out = new PrintWriter(client.getOutputStream(), true);
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
@@ -31,22 +33,68 @@ public class Client {
                 {
                         System.out.println(fromServer = in.readLine());
                         toServer = userIn.readLine();
+                        sendTemp();
+                        sendHeartRate();
+                        checkWarning();
+                        
                         if (toServer != null) {
                                 System.out.println("Client: " + toServer);
                                 out.println(toServer);
                         }
+                        
                         if (toServer.equals("disconnect")) {
                                 break;
                         }
+                        
                         if(toServer.equals("temp"))
                         {
                                 sendTemp();
                         }
+                       
                 }
                 out.println("&discon&");
                 System.out.println("Client was disconnected");
              
-                client.close();
+                client.close(); */
+        }
+        public Client(String IP) throws UnknownHostException, IOException {
+        	IPaddress = IP;
+            Socket client = new Socket(IPaddress, 8081);
+            out = new PrintWriter(client.getOutputStream(), true);
+            in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            
+            @SuppressWarnings("unused")
+                            String fromServer;
+            
+            while(client.isConnected())
+            {
+            	fromServer = in.readLine();
+            	if(fromServer.equals("disconnect")) {
+                    break;
+            	}
+                else if (fromServer.equals("start")) {
+                	sendTemp();
+                    sendHeartRate();
+                    checkWarning();
+                }
+                else if(fromServer.equals("warning1")) {
+                	bodyTempSpike();
+                	checkWarning();
+                }
+                else if(fromServer.equals("warning2")) {
+                	heartRateSpike();
+                	checkWarning();
+                }
+                else if(fromServer.equals("warning3")) {
+                	heartRateSpike();
+                	bodyTempSpike();
+                	checkWarning();
+                }
+            }
+            out.println("disconnect");
+            System.out.println("Client was disconnected");
+         
+            client.close();
         }
         
         public static double temperature()
@@ -94,11 +142,42 @@ public class Client {
         	out.println("HR " + heartRate());
         }
         
-        public static void groinKick()
+        public static void checkWarning()
         {
-        	CurrentHr = CurrentHr + 50;
-        	sendHeartRate();
+        	boolean hrwarn = false , tempwarn = false;
+        	if (CurrentBt < bt - 1 || CurrentBt > bt + 1) {
+        		tempwarn = true;
+        	}
+        	if (CurrentHr < hr - 20 || CurrentHr > hr + 30) {
+        		hrwarn = true;
+        	}
+        	if(hrwarn || tempwarn) {
+        		if (hrwarn & !tempwarn) {
+        			out.println("warning hr");
+        			System.out.println("Heart rate warning alert sent to server");
+        		}
+        		else if (tempwarn & !hrwarn) {
+            		out.println("warning temp");
+        			System.out.println("Temperature warning alert sent to server");
+            	}
+        		else if (tempwarn & hrwarn) {
+        			out.println("warning both");
+        			System.out.println("Dual warning alert sent to server");
+        		}
+            }
+            else {
+            	out.println("warning clear");
+            }
         }
         
+        public static void heartRateSpike()
+        {
+        	CurrentHr = CurrentHr + 50;
+        }
+        
+        public static void bodyTempSpike()
+        {
+        	CurrentBt = CurrentBt + 2;
+        }
 
 }
