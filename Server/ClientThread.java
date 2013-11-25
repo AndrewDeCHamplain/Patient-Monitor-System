@@ -13,12 +13,14 @@ public class ClientThread extends Thread{
     private int Pinum;
     private Client_Pi who;
     private static String fromClient;
+    private int o;
 
         public ClientThread(Socket clientsocket, int i, Client_Pi who) throws IOException
         {
                 this.who = who;
                 this.socket = clientsocket;
                 Pinum = i;
+                o = 0;
 
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
@@ -47,6 +49,10 @@ public class ClientThread extends Thread{
                 //check if it equals the disconnect command
                 while(!(fromClient).equals("disconnect"))
                 {
+                        if(o == 20)
+                        {
+                        	out.println("disconnect"); 
+                        }
                         
                         if(tokens[0].equals("temp"))
                         {
@@ -104,6 +110,7 @@ public class ClientThread extends Thread{
                                 tokens = fromClient.split(delims);
                         	}
                         }
+                        o++;
                         out.println("start"); 
                         
                 }        
