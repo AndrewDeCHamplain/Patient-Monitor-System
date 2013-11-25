@@ -3,8 +3,8 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
-import javax.media.CannotRealizeException;
-import javax.media.NoPlayerException;
+///import javax.media.CannotRealizeException;
+//import javax.media.NoPlayerException;
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -181,7 +181,7 @@ private BitSet warning;
 	
 	//set the designated client's warning status 
 	//should eventually focus on that pi's video
-	public void Set_Warnings(BitSet W) throws NoPlayerException, CannotRealizeException, IOException 
+	public void Set_Warnings(BitSet W) throws/* NoPlayerException, CannotRealizeException, */IOException 
 	{
 		warning.and(W);
 		setupMain();
@@ -202,7 +202,7 @@ private BitSet warning;
 	}
 	
 	//create a new client_pi up to a max of 4.
-	public void SetupPi(int z) throws NoPlayerException, CannotRealizeException, IOException
+	public void SetupPi(int z) throws /*NoPlayerException, CannotRealizeException,*/ IOException
 	{
 		String l = "" + z;
 		System.out.println(l);
@@ -258,7 +258,7 @@ private BitSet warning;
 	
 	//clears the frame of the client
 	//used to clear or set the warning response
-	public void ReplacePi(int h) throws NoPlayerException, CannotRealizeException, IOException
+	public void ReplacePi(int h) throws IOException
 	{
 		String s = "" + h;
 		System.out.println(s);
@@ -301,10 +301,6 @@ private BitSet warning;
 				{
 					try {
 						SetupPi(1);
-					} catch (NoPlayerException e1) {
-						e1.printStackTrace();
-					} catch (CannotRealizeException e1) {
-						e1.printStackTrace();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}
@@ -313,10 +309,6 @@ private BitSet warning;
 				{
 					try {
 						SetupPi(2);
-					} catch (NoPlayerException e1) {
-						e1.printStackTrace();
-					} catch (CannotRealizeException e1) {
-						e1.printStackTrace();
 					} catch (IOException e1) {
 						e1.printStackTrace();
 					}	
