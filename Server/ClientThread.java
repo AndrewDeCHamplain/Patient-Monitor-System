@@ -50,7 +50,7 @@ public class ClientThread extends Thread{
 			if(tokens[0].equals("temp"))
 			{
 				//if it is a temp, set the new temp
-				who.setText(tokens[1]);
+				who.setTempText(tokens[1]);
 				//get next string
 				fromClient = in.readLine();
 				tokens = fromClient.split(delims);
@@ -58,7 +58,7 @@ public class ClientThread extends Thread{
 			if(tokens[0].equals("hr"))
 			{
 				//if it is the heart rate, set the new heart rate
-				who.setText(tokens[1]);
+				who.setTempText(tokens[1]);
 				//get the next string
 				fromClient = in.readLine();
 				tokens = fromClient.split(delims);
