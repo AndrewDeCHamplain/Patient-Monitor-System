@@ -39,12 +39,13 @@ public class ClientThread extends Thread{
         //a loop to keep receiving
         public void receive() throws IOException
         {
+                out.println("start");
                 fromClient = in.readLine();
                 //setup delimiter
                 String delims = " &";
                 String[] tokens = fromClient.split(delims);
                 //check if it equals the disconnect command
-                while(!(fromClient).equals("discon"))
+                while(!(fromClient).equals("disconnect"))
                 {
                         
                         if(tokens[0].equals("temp"))
@@ -103,6 +104,7 @@ public class ClientThread extends Thread{
                                 tokens = fromClient.split(delims);
                         	}
                         }
+                        out.println("start"); 
                         
                 }        
                 disconnect();
