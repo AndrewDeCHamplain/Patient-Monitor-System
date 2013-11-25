@@ -121,5 +121,10 @@ public class ClientThread extends Thread{
                 
         }
         
+        public void stop()
+        {
+                out.println("disconnect"); 
+        }
+        
 
 }
