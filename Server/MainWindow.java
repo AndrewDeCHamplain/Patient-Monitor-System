@@ -1,4 +1,16 @@
 
+import java.awt.*;
+import java.io.IOException;
+import java.util.*;
+
+import javax.swing.*;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+public class MainWindow implements ActionListener{
+	
+
 private Container contentPane;
 private JButton Connect;
 private JMenuItem quitItem;
