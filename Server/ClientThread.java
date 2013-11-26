@@ -14,9 +14,11 @@ public class ClientThread extends Thread{
     private Client_Pi who;
     private static String fromClient;
     private int o;
+    private MainWindow gui;
 
-        public ClientThread(Socket clientsocket, int i, Client_Pi who) throws IOException
+        public ClientThread(Socket clientsocket, int i, Client_Pi who, MainWindow gui) throws IOException
         {
+                this.gui = gui;
                 this.who = who;
                 this.socket = clientsocket;
                 Pinum = i;
@@ -123,11 +125,12 @@ public class ClientThread extends Thread{
                 in.close();
                 out.close();
                 socket.close();
-                who.ClearFrame();
+                gui.Disconnect(Pinum);
                 
                 
         }
         
+        //sends the disconnect command
         public void stop()
         {
                 out.println("disconnect"); 
