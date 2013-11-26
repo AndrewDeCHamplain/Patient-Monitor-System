@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -6,7 +5,7 @@ import java.net.Socket;
 
 public class Setup
 {        
-		private MainWindow gui;
+	private static MainWindow gui;
         private static ServerSocket server;
         private static Socket client;
         private static Socket client_1;
