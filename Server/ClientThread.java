@@ -51,15 +51,20 @@ public class ClientThread extends Thread{
                 //check if it equals the disconnect command
                 while(!(fromClient).equals("disconnect"))
                 {
-                        if(o == 20)
+                        if(o == 21)
                         {
-                        	out.println("disconnect"); 
+                                stopConnection(); 
+                        }else if(o == 0)
+                        {
+                        	out.println("start");
+                        	o++;
                         }
                         
                         if(tokens[0].equals("temp"))
                         {
                                 //if it is a temp, set the new temp
-                                who.setText(tokens[1]);
+                                who.setTempText(tokens[1]);
+                                out.println("go");
                                 //get next string
                                 fromClient = in.readLine();
                                 tokens = fromClient.split(delims);
@@ -67,55 +72,60 @@ public class ClientThread extends Thread{
                         if(tokens[0].equals("hr"))
                         {
                                 //if it is the heart rate, set the new heart rate
-                                who.setText(tokens[1]);
+                                who.setHRText(tokens[1]);
+                                out.println("go");
                                 //get the next string
                                 fromClient = in.readLine();
                                 tokens = fromClient.split(delims);
                         }
                         if(tokens[0].equals("warning"))
                         {
-                        	if(tokens[1].equals("hr"))
-                        	{
-                        		who.setHRText("warning!");
-                        		//MainWindow.Set_Warnings(who.Set(1));
-                                //get the next string
-                                fromClient = in.readLine();
-                                tokens = fromClient.split(delims);
-                        	}
-                        	else if(tokens[1].equals("temp"))
-                        	{
-                        		who.setTempText("warning!");
-                                //get the next string
-                                fromClient = in.readLine();
-                                tokens = fromClient.split(delims);
-                        	}
-                        	else if(tokens[1].equals("both"))
-                        	{
-                        		who.setHRText("warning!");
-                        		who.setTextText("warning!");
-                                //get the next string
-                                fromClient = in.readLine();
-                                tokens = fromClient.split(delims);
-                        	}
-                        	else if(tokens[1].equals("both"))
-                        	{
-                        		who.setHRText("warning!");
-                        		who.setTextText("warning!");
-                                //get the next string
-                                fromClient = in.readLine();
-                                tokens = fromClient.split(delims);
-                        	}
-                        	else if(tokens[1].equals("clear"))
-                        	{
-                                //get the next string
-                                fromClient = in.readLine();
-                                tokens = fromClient.split(delims);
-                        	}
+                                if(tokens[1].equals("hr"))
+                                {
+                                        who.setHRText("warning!");
+                                        out.println("go");
+                                        //MainWindow.Set_Warnings(who.Set(1));
+                                        //get the next string
+                                        fromClient = in.readLine();
+                                        tokens = fromClient.split(delims);
+                                }
+                                else if(tokens[1].equals("temp"))
+                                {
+                                        who.setTempText("warning!");
+                                        //get the next string
+                                        fromClient = in.readLine();
+                                        tokens = fromClient.split(delims);
+                                }
+                                else if(tokens[1].equals("both"))
+                                {
+                                        who.setHRText("warning!");
+                                        who.setTempText("warning!");
+                                        //get the next string
+                                        fromClient = in.readLine();
+                                        tokens = fromClient.split(delims);
+                                }
+                                else if(tokens[1].equals("both"))
+                                {
+                                        who.setHRText("warning!");
+                                        who.setTempText("warning!");
+                                        //get the next string
+                                        fromClient = in.readLine();
+                                        tokens = fromClient.split(delims);
+                                }
+                                else if(tokens[1].equals("clear"))
+                                {
+                                	//get the next string
+                                	fromClient = in.readLine();
+                                	tokens = fromClient.split(delims);
+                                }
+                                o++;
+                                out.println("start"); 
                         }
-                        o++;
-                        out.println("start"); 
                         
-                }        
+                        
+                        
+                }
+                stopConnection();
                 disconnect();
         }
         
@@ -125,15 +135,18 @@ public class ClientThread extends Thread{
                 in.close();
                 out.close();
                 socket.close();
-                gui.Disconnect(Pinum);
+                gui.DisconnectPi(Pinum);
                 
                 
         }
         
         //sends the disconnect command
-        public void stop()
+        public void stopConnection() throws IOException
         {
-                out.println("disconnect"); 
+                out.println("disconnect");
+                in.close();
+                out.close();
+                socket.close();
         }
         
 
