@@ -1,3 +1,4 @@
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -5,7 +6,7 @@ import java.net.Socket;
 
 public class Setup
 {        
-	private static MainWindow gui;
+		private static MainWindow gui;
         private static ServerSocket server;
         private static Socket client;
         private static Socket client_1;
@@ -24,7 +25,7 @@ public class Setup
         public Setup() throws IOException
         {
         	gui = new MainWindow();
-        	server = new ServerSocket(8081);
+        	server = new ServerSocket(8091);
         }
         
         public static void Connect(int i, Client_Pi who) throws IOException
@@ -44,13 +45,8 @@ public class Setup
         	{
             	client_1 = client;
         	}
-        	new ClientThread(client, i, who).start();
-        	/*
-            ConnectedToWho(i).setSocket(server.accept());
-            in = new BufferedReader(new InputStreamReader(ConnectedToWho(i).GetSocket().getInputStream()));
-            out = new PrintWriter(ConnectedToWho(i).GetSocket().getOutputStream(), true);
-            out.println("Connected to server");
-                    */
+        	new ClientThread(client, i, who, gui).start();
+        	
         }
         
         public static void disconnect(int i) throws IOException
