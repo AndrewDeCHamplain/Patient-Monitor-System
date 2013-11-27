@@ -1,4 +1,3 @@
-
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,7 +24,7 @@ public class Setup
         public Setup() throws IOException
         {
         	gui = new MainWindow();
-        	server = new ServerSocket(8091);
+        	server = new ServerSocket(8081);
         }
         
         public static void Connect(int i, Client_Pi who) throws IOException
