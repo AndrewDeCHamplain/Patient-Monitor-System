@@ -20,75 +20,47 @@ public class Client {
         {
                 IPaddress = args[0];
                 Client c = new Client(IPaddress);
-                /*
-                Socket client = new Socket(IPaddress, 8081);
-                out = new PrintWriter(client.getOutputStream(), true);
-                in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-                BufferedReader userIn = new BufferedReader(new InputStreamReader(System.in));
-                
-                @SuppressWarnings("unused")
-                                String fromServer, toServer;
-                
-                while(client.isConnected())
-                {
-                        System.out.println(fromServer = in.readLine());
-                        toServer = userIn.readLine();
-                        sendTemp();
-                        sendHeartRate();
-                        checkWarning();
-                        
-                        if (toServer != null) {
-                                System.out.println("Client: " + toServer);
-                                out.println(toServer);
-                        }
-                        
-                        if (toServer.equals("disconnect")) {
-                                break;
-                        }
-                        
-                        if(toServer.equals("temp"))
-                        {
-                                sendTemp();
-                        }
-                       
-                }
-                out.println("&discon&");
-                System.out.println("Client was disconnected");
-             
-                client.close(); */
         }
         public Client(String IP) throws UnknownHostException, IOException {
         	IPaddress = IP;
             Socket client = new Socket(IPaddress, 8081);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            
-            @SuppressWarnings("unused")
-                            String fromServer;
+
+            String fromServer;
             
             while(client.isConnected())
             {
             	fromServer = in.readLine();
             	if(fromServer.equals("disconnect")) {
-                    break;
+            		System.out.println(fromServer);
+            		break;
             	}
                 else if (fromServer.equals("start")) {
+                	System.out.println(fromServer);
                 	sendTemp();
                     sendHeartRate();
                     checkWarning();
+                	System.out.println("sent");
                 }
                 else if(fromServer.equals("warning1")) {
+                	System.out.println(fromServer);
                 	bodyTempSpike();
                 	checkWarning();
+                	System.out.println("sent");
                 }
                 else if(fromServer.equals("warning2")) {
+                	System.out.println(fromServer);
                 	heartRateSpike();
                 	checkWarning();
+                	System.out.println("sent");
                 }
                 else if(fromServer.equals("warning3")) {
+                	System.out.println(fromServer);
                 	heartRateSpike();
                 	bodyTempSpike();
                 	checkWarning();
+                	System.out.println("sent");
                 }
             }
             out.println("disconnect");
@@ -111,9 +83,10 @@ public class Client {
                 }
         }
         
-        public static void sendTemp()
+        public static void sendTemp() throws IOException
         {    
         	out.println("temp " + temperature());
+        	wait(in.readLine().equals("go"));
         }
         
         public static int heartRate()
@@ -137,12 +110,12 @@ public class Client {
         	}
         }
         
-        public static void sendHeartRate() 
+        public static void sendHeartRate() throws IOException 
         {
         	out.println("HR " + heartRate());
         }
         
-        public static void checkWarning()
+		public static void checkWarning()
         {
         	boolean hrwarn = false , tempwarn = false;
         	if (CurrentBt < bt - 1 || CurrentBt > bt + 1) {
@@ -179,5 +152,16 @@ public class Client {
         {
         	CurrentBt = CurrentBt + 2;
         }
+        
+        private static void wait(boolean equals) throws IOException {
+        	while(!equals)
+        	{
+        		for(int w = 0; w < 100; w++)
+        		{
+        			in.readLine();
+        		}
+        	}
+			
+		}
 
 }
