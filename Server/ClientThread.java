@@ -7,7 +7,7 @@ import java.net.Socket;
 
 public class ClientThread extends Thread{
         
-        private Socket socket;
+    private Socket socket;
     private PrintWriter out;
     private BufferedReader in;
     private int Pinum;
@@ -23,6 +23,7 @@ public class ClientThread extends Thread{
                 this.socket = clientsocket;
                 Pinum = i;
                 o = 0;
+                who.setThread(this);
 
                 in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(socket.getOutputStream(), true);
@@ -43,7 +44,7 @@ public class ClientThread extends Thread{
         //a loop to keep receiving
         public void receive() throws IOException
         {
-                out.println("start");
+                //out.println("start");
                 fromClient = in.readLine();
                 //setup delimiter
                 String delims = " &";
@@ -125,13 +126,13 @@ public class ClientThread extends Thread{
                         
                         
                 }
-                stopConnection();
                 disconnect();
         }
         
         //disconnects the client and closes the frame
         public void disconnect() throws IOException
         {
+                out.println("disconnect");
                 in.close();
                 out.close();
                 socket.close();
