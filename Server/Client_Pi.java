@@ -30,6 +30,8 @@ public class Client_Pi extends JFrame implements ActionListener{
 	private Socket socket;
 	private int n;
 	private Video Pi_video;
+        private BitSet warn;
+        private ClientThread thread;
 	
 	public Client_Pi(String z, String ip) throws InterruptedException
 	{
@@ -37,6 +39,7 @@ public class Client_Pi extends JFrame implements ActionListener{
 		URL = ip;
 		Z = z;
 		setWindow(z);
+                warn = new BitSet(3);
 	}
 	public void setWindow(String Z) throws InterruptedException 
 	{
@@ -50,6 +53,7 @@ public class Client_Pi extends JFrame implements ActionListener{
 	    //setup video JPanel
 	    Pi_vid = new JPanel();
 	    Pi_vid.setBackground(Color.BLACK);
+	    contentPanePi.add(Pi_vid);
 		
 	    
 	    //setup the JPanel for the toggle button
@@ -94,7 +98,7 @@ public class Client_Pi extends JFrame implements ActionListener{
 		Pi_video = new Video(URL);
 	    Pi_video.setBorder(BorderFactory.createLineBorder(Color.lightGray));
 	    //Pi_vid.setSize(720, 480);
-	    contentPanePi.add(Pi_video);
+	    Pi_vid.add(Pi_video);
 	    Pi_video.setBackground(Color.black);
 	    Pi_video.Startmedia();
 	    play();
@@ -141,6 +145,36 @@ public class Client_Pi extends JFrame implements ActionListener{
 		}
 	}
 	
+	//sets the warning bits
+	//if q = 0. then clear the warnings
+	// if q = 1, then set the warning for this client
+	public BitSet Set(int q)
+        {
+                if(q == 1)
+                {
+                        if(n == 0)
+                        {
+                                warn.set(0, true);
+                                return warn;
+                        }
+                        else if(n == 1)
+                        {
+                                warn.set(1, true);
+                                return warn;
+                        }else if(n == 2)
+                        {
+                                warn.set(2, true);
+                                return warn;
+                        }else if(n == 3)
+                        {
+                                warn.set(3, true);
+                                return warn;
+                        }
+                }
+                warn = new BitSet(3);
+                return warn;
+        }
+	
 	//returns a reference to this client
 	public Client_Pi Who()
 	{
@@ -152,6 +186,12 @@ public class Client_Pi extends JFrame implements ActionListener{
 	{
 		socket = sock;
 	}
+	
+	//sets the thread that is connected to this window
+	public void setThread(ClientThread thread)
+        {
+        	this.thread = thread;
+        }
 	
 	//returns the socket associated with this client
 	public Socket GetSocket()
