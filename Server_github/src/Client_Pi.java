@@ -104,8 +104,8 @@ public class Client_Pi extends JFrame implements ActionListener{
             //Piframe.setResizable(false);
             Piframe.setVisible(true);
             
-            //mediaPlayerComponent.getMediaPlayer().playMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
-            mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
+            mediaPlayerComponent.getMediaPlayer().playMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
+            //mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
         }
         
         public void ClearFrame() throws IOException

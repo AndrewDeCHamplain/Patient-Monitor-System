@@ -2,12 +2,12 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/jna-3.5.2.jar"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/platform-3.5.2.jar"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/vlcj-2.4.1.jar"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/vlcj-2.4.1-javadoc.jar"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/vlcj-2.4.1-sources.jar"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/vlcj-2.4.1-tests.jar"/>
-	<classpathentry kind="lib" path="M:/Sysc3010/vlcj-2.4.1/vlcj-2.4.1-test-sources.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/jna-3.5.2.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/platform-3.5.2.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/vlcj-2.4.1.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/vlcj-2.4.1-javadoc.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/vlcj-2.4.1-sources.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/vlcj-2.4.1-tests.jar"/>
+	<classpathentry kind="lib" path="M:/git/Patient-Monitor-System/Server_github/jars/vlcj-2.4.1-test-sources.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -2,6 +2,12 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import uk.co.caprica.vlcj.binding.LibVlc;
+import uk.co.caprica.vlcj.runtime.RuntimeUtil;
+
+import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
+
 
 public class Setup
 {        
@@ -17,6 +23,11 @@ public class Setup
         
     public static void main(String[] args) throws IOException
     {
+    	NativeLibrary.addSearchPath(
+            RuntimeUtil.getLibVlcLibraryName(), "M:\\vlc-2.1.1"
+        );
+        Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
+            
         @SuppressWarnings("unused")
 		Setup hub = new Setup();
     }
