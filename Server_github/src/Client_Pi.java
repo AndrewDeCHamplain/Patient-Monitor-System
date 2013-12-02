@@ -10,17 +10,20 @@ import java.util.BitSet;
 
 
 
+
 //import javax.media.CannotRealizeException;
 //import javax.media.NoPlayerException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
+//import javax.swing.JRootPane;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 //import javax.swing.WindowConstants;
 
+
+import javax.swing.WindowConstants;
 
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
@@ -44,7 +47,7 @@ public class Client_Pi extends JFrame implements ActionListener{
         private int n;
         private BitSet warn;
         private ClientThread thread;
-    	private EmbeddedMediaPlayerComponent mediaPlayerComponent;
+        private EmbeddedMediaPlayerComponent mediaPlayerComponent;
         
         public Client_Pi(String z, String ip) //throws NoPlayerException, CannotRealizeException, IOException
         {
@@ -58,10 +61,10 @@ public class Client_Pi extends JFrame implements ActionListener{
         {
             Piframe = new JFrame("Client " + Z);
 
-    		mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-    		Piframe.setContentPane(mediaPlayerComponent);
-    		setLocationOnScreen();
-    		
+                    mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+                    Piframe.setContentPane(mediaPlayerComponent);
+                    setLocationOnScreen();
+                    
             contentPanePi = Piframe.getContentPane();
             contentPanePi.setLayout(new BoxLayout(contentPanePi, BoxLayout.Y_AXIS));
             contentPanePi.setSize(540, 640);
@@ -94,24 +97,26 @@ public class Client_Pi extends JFrame implements ActionListener{
              hr.setText("Connected");
              hr.setHorizontalAlignment(JTextField.CENTER);
              hr.setEditable(false);
-			
+                        
             contentPanePi.add(Pi_sound);
 
             //Piframe.setUndecorated(true);
             //getRootPane().setWindowDecorationStyle(JRootPane.NONE);
+            Piframe.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
              
             Piframe.pack();
             //Piframe.setResizable(false);
             Piframe.setVisible(true);
             
-            mediaPlayerComponent.getMediaPlayer().playMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
+            mediaPlayerComponent.getMediaPlayer().playMedia("http://10.0.0.21:8080/?action=stream");
+            //mediaPlayerComponent.getMediaPlayer().playMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
             //mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
         }
         
         public void ClearFrame() throws IOException
         {
-        	thread.stopConnection();
-        	mediaPlayerComponent.release();
+                thread.stopConnection();
+                mediaPlayerComponent.release();
             Piframe.setVisible(false);
             Piframe.dispose();
             Setup.disconnect(n);
@@ -141,9 +146,9 @@ public class Client_Pi extends JFrame implements ActionListener{
                 }
         }
 
-    	//sets the warning bits
-    	//if q = 0. then clear the warnings
-    	// if q = 1, then set the warning for this client
+            //sets the warning bits
+            //if q = 0. then clear the warnings
+            // if q = 1, then set the warning for this client
         public BitSet Set(int q)
         {
                 if(q == 1)
@@ -183,7 +188,7 @@ public class Client_Pi extends JFrame implements ActionListener{
         
         public void setThread(ClientThread thread)
         {
-        	this.thread = thread;
+                this.thread = thread;
         }
         
         public Socket GetSocket()
@@ -213,18 +218,18 @@ public class Client_Pi extends JFrame implements ActionListener{
         
         public void setLocationOnScreen()
         {
-        	if(n == 1)
-        	{
-        		Piframe.setLocation(250, 0);
-        	}else if(n == 2)
-        	{
-        		Piframe.setLocation((GetScreenWorkingWidth()/2)+250, 0);
-        	}else if(n == 3)
-        	{
-        		Piframe.setLocation(250, (GetScreenWorkingHeight()/2));
-        	}else if(n == 4)
-        	{
-        		Piframe.setLocation((GetScreenWorkingWidth()/2)+250, (GetScreenWorkingHeight()/2));
-        	}
+                if(n == 1)
+                {
+                        Piframe.setLocation(250, 0);
+                }else if(n == 2)
+                {
+                        Piframe.setLocation((GetScreenWorkingWidth()/2)+250, 0);
+                }else if(n == 3)
+                {
+                        Piframe.setLocation(250, (GetScreenWorkingHeight()/2));
+                }else if(n == 4)
+                {
+                        Piframe.setLocation((GetScreenWorkingWidth()/2)+250, (GetScreenWorkingHeight()/2));
+                }
         }
 }
