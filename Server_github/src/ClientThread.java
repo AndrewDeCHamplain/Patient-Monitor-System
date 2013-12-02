@@ -12,55 +12,108 @@ public class ClientThread extends Thread{
     private BufferedReader in;
     private int Pinum;
     private Client_Pi who;
-    private static String fromClient;
-    private int o;
+    private String fromClient;
     private MainWindow gui;
 
-        public ClientThread(Socket clientsocket, int i, Client_Pi who, MainWindow gui) throws IOException
-        {
-                this.gui = gui;
-                this.who = who;
-                this.socket = clientsocket;
-                Pinum = i;
-                o = 0;
-                who.setThread(this);
-
-                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                out = new PrintWriter(socket.getOutputStream(), true);
+    public ClientThread(Socket clientsocket, int i, Client_Pi who, MainWindow gui) throws IOException
+    {
+        this.gui = gui;
+        this.who = who;
+        this.socket = clientsocket;
+        Pinum = i;
+        who.setThread(this);
+        
+        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        out = new PrintWriter(socket.getOutputStream(), true);
 
         out.println("Connected to server");
         out.println("Pi #: " + Pinum);
-        }
+    }
         
-        public void run()
-        {
-                        try {
-                                receive();
-                        } catch (IOException e) {
-                                e.printStackTrace();
-                        }                
-        }
+    public void run()
+    {
+        try {
+        receive();
+        } catch (IOException e) {
+        	e.printStackTrace();
+        }                
+    }
         
         //a loop to keep receiving
-        public void receive() throws IOException
+    public void receive() throws IOException
+    {
+        //setup delimiter
+        		
+        String delims = " &";
+        fromClient = in.readLine();
+        out.println("received");
+        //check if it equals the disconnect command
+        while(!(fromClient).equals("disconnect"))
         {
-                //out.println("start");
+        	
+          	while (!in.readLine().equals("ready")) {
+           		//loop until client has values
+           	}
+           	out.println("start");
+           	while ((fromClient = in.readLine()).equals("ready")) {
+           		//When the message from the client no longer reads "ready" it has sent usable values
+           	}
+            String[] tokens = fromClient.split(delims);
+            String HeartRate = "", Temperature = "";
+        
+            for (int i = 0; i < 6;i = i + 2) {
+            	String statusType = tokens[i];
+                if (statusType.equals("temp")) {
+                	//if it is a temperature, set the new temperature value
+                    Temperature = tokens[i + 1];
+                    who.setTempText(Temperature);
+                }
+                else if (statusType.equals("hr")) {
+                	HeartRate = tokens[i + 1];
+                    who.setHRText(HeartRate);
+                }
+               	else if (statusType.equals("warning")) {
+              		String warningType = tokens[i + 1];
+              		if (warningType.equals("clear")) {
+              			/*Clear the warning field in GUI
+              			 * 
+              			 */
+              		}
+                    else {
+                    	int a = 1;
+                       	while (i + a < tokens.length) {
+                       		if (tokens[i+a].equals("temp")) {
+                       			/*
+                       			 * Set the temperature warning field
+                   				 * You will need a separate field in the GUI
+              					 */
+                       		}
+                       		else if (tokens[i+a].equals("hr")) {
+                       			/*
+                       			 * Set the Heart Rate warning field
+                       			 * You will need a separate field in the GUI
+                    			 * This code is written to allow for modularity,
+                       			 * so display multiple warnings if applicable
+                       			 * Another warning type should only require one more else if loop in this code
+                       			 */
+                       		}
+                       		else {
+              					System.out.println("Unexpected Warning Type: " + tokens[i + a]);
+              				}
+                       		a++;
+               			}
+              		}
+              	}
+                else {
+              		System.out.println("Unexpected Status Type: " + statusType);
+              	}
+                /*
+                 * Get another status string array here to reiterate loop
+                 */
                 fromClient = in.readLine();
-                //setup delimiter
-                String delims = " &";
-                String[] tokens = fromClient.split(delims);
-                //check if it equals the disconnect command
-                while(!(fromClient).equals("disconnect"))
-                {
-                        if(o == 21)
-                        {
-                                stopConnection(); 
-                        }else if(o == 0)
-                        {
-                        	out.println("start");
-                        	o++;
-                        }
-                        
+                out.println("received");
+            }
+                        /*
                         if(tokens[0].equals("temp"))
                         {
                                 //if it is a temp, set the new temp
@@ -105,24 +158,17 @@ public class ClientThread extends Thread{
                                         fromClient = in.readLine();
                                         tokens = fromClient.split(delims);
                                 }
-                                else if(tokens[1].equals("both"))
-                                {
-                                        who.setHRText("warning!");
-                                        who.setTempText("warning!");
-                                        //get the next string
-                                        fromClient = in.readLine();
-                                        tokens = fromClient.split(delims);
-                                }
                                 else if(tokens[1].equals("clear"))
                                 {
                                 	//get the next string
                                 	fromClient = in.readLine();
                                 	tokens = fromClient.split(delims);
                                 }
+                                
                                 o++;
                                 out.println("start"); 
                         }
-                        
+                        */
                         
                         
                 }
