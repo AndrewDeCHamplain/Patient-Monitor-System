@@ -37,40 +37,62 @@ public class Client {
     	String fromServer;
            
         while(client.isConnected()) {
-        	
         	temperature(); 							//Refresh temperature value
         	heartRate();							//Refresh Heart Rate value
-            fromServer = in.readLine();				//Check for message from server
+        	out.println("ready");
+        	
+            while ((fromServer = in.readLine()).equals("received")) { 
+            	//Wait for server to send a proper signal
+            }
+            
+            /*
+             * When the server sends something other than "wait",
+             * this if loop determines what that is and reacts based on that
+             * Possible messages from server include "disconnect", "start", "warning1", "warning2" and "warning3"
+             */
             if(fromServer.equals("disconnect")) {
                 System.out.println(fromServer);		
                 break;								//Stop running
             }
             else if (fromServer.equals("start")) {
                 System.out.println(fromServer);
-                statusUpdate();
-                System.out.println("sent");
+                out.println(statusUpdate());
+                waitForServer();
             }
             else if(fromServer.equals("warning1")) {
                 System.out.println(fromServer);
                 bodyTempSpike();
-                statusUpdate();
+                out.println(statusUpdate());
                 System.out.println("sent body temp spike");
+                waitForServer();
             }
             else if(fromServer.equals("warning2")) {
                 System.out.println(fromServer);
                 heartRateSpike();
-                statusUpdate();
+                out.println(statusUpdate());
                 System.out.println("sent heart rate spike");
+                waitForServer();
             }
             else if(fromServer.equals("warning3")) {
                 System.out.println(fromServer);
                 heartRateSpike();
                 bodyTempSpike();
-                statusUpdate();
+                out.println(statusUpdate());
                 System.out.println("sent both spikes");
+                waitForServer();
+            }
+            else {
+            	System.out.println("Unexpected message from server: " + fromServer);
             }
         }
     }
+    
+    private void waitForServer() throws IOException {
+    	 while (!in.readLine().equals("received")) {
+         	//blank while loop waits until server is done to continue
+         }
+    }
+    
     private void temperature()
     {
         Random rand = new Random();
@@ -107,25 +129,21 @@ public class Client {
       
         private String checkWarning()
         {
-            boolean hrwarn = false , tempwarn = false;
+        	
+            boolean warning = false;
+            String warningList = "";
             if (CurrentBt < bt - 1 || CurrentBt > bt + 1) {
-                tempwarn = true;
+                warningList = warningList + "temp ";
+                warning = true;
             }
             if (CurrentHr < hr - 20 || CurrentHr > hr + 30) {
-                hrwarn = true;
+                warningList = warningList + "hr ";
+                warning = true;
             }
             
-            if(hrwarn || tempwarn) {
-                if (hrwarn & !tempwarn) {
-                    return "warning hr";
-                }
-                else if (tempwarn & !hrwarn) {
-                    return "warning temp";
-                }
-                else {
-                    return "warning both";
-                }
-            } 
+            if(warning) {
+            	return "warning " + warningList;
+            }
             else {
                 return "warning clear";
             }
@@ -160,7 +178,10 @@ public class Client {
         {
         	 out.println("disconnect");
              System.out.println("Client was disconnected");
+             in.close();
+             out.close();
              client.close();
         }
+        
         
 }
