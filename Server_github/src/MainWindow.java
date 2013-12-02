@@ -1,4 +1,3 @@
-
 import java.awt.*;
 import java.io.IOException;
 import java.util.*;
@@ -173,7 +172,7 @@ public class MainWindow implements ActionListener{
 		    //add the warnings to the pane
 		    contentPane.add(warnings);
 		    //if 4 clients are connected, then disable the connect button.
-		    if(q == 1)
+		    if(q == 4)
 		    {
 		    	Connect.setEnabled(false);
 		    }
@@ -217,9 +216,11 @@ public class MainWindow implements ActionListener{
 			}else if(z == 3)
 			{
 				CC_3 = new Client_Pi(l, URL_3);
+				Setup.Connect(z, CC_3);
 			}else if(z == 4)
 			{
 				CC_4 = new Client_Pi(l, URL_4);
+				Setup.Connect(z, CC_4);
 			}
 			
 		}
@@ -294,7 +295,6 @@ public class MainWindow implements ActionListener{
 					//connect a new client
 					System.out.println(x.nextClearBit(3));
 					x.set(x.nextClearBit(0));
-					setupMain();
 					System.out.println("button pressed.");
 					if(x.get(0) && CC_1 == null)
 					{
@@ -303,6 +303,8 @@ public class MainWindow implements ActionListener{
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
+						q++;
+						setupMain();
 						
 					}else if(x.get(1) && CC_2 == null)
 					{
@@ -310,7 +312,9 @@ public class MainWindow implements ActionListener{
 							SetupPi(2);
 						} catch (IOException e1) {
 							e1.printStackTrace();
-						}	
+						}
+						q++;
+						setupMain();	
 					}else if(x.get(2) && CC_3 == null)
 					{
 						//connection for client 3
@@ -319,6 +323,8 @@ public class MainWindow implements ActionListener{
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
+						q++;
+						setupMain();
 						//warning.set(0, 2); 
 						//ReplacePi(1);    //testing reseting client 1		
 					}else if(x.get(3) && CC_4 == null)
@@ -329,12 +335,14 @@ public class MainWindow implements ActionListener{
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						q = 1;
+						q++;
+						setupMain();
 						//warning.set(0, 4); 
 						//setupMain();
 					}
 				}else if(b.equals(Cpi_1))  //if first client button
 				{
+					q--;
 					System.out.println("pressed warning button 1.");
 					if(warning.get(0))   // and if warning is on
 					{
@@ -354,6 +362,7 @@ public class MainWindow implements ActionListener{
 					}
 				}else if(b.equals(Cpi_2))  //if second client button
 				{
+					q--;
 					System.out.println("pressed warning button 2.");
 					if(warning.get(1))   // and if warning is on
 					{
@@ -384,6 +393,7 @@ public class MainWindow implements ActionListener{
 						setupMain();
 					}else if(!warning.get(2) && x.get(2))
 					{
+						q--;
 						//if warning is not on, then disconnect
 						System.out.println("Disconnecting pi #3");
 						try {
@@ -405,6 +415,7 @@ public class MainWindow implements ActionListener{
 						setupMain();
 					}else if(!warning.get(3) && x.get(3))
 					{
+						q--;
 						//if warning is not on, then disconnect
 						System.out.println("Disconnecting pi #4");
 						try {
