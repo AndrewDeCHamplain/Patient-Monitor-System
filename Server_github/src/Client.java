@@ -40,25 +40,29 @@ public class Client {
             {
                 temperature();                                                         //Refresh temperature value
                 heartRate();                                                        //Refresh Heart Rate value
-             
+
                 if(fromServer.equals("disconnect")) {
                 	System.out.println(fromServer);                
                 	break;                                                                //Stop running
                 }
                 else if (fromServer.equals("start")) {
-                	System.out.println(fromServer);
+                	//System.out.println(fromServer);
+                	//System.out.println(statusUpdate());
                 	out.println(statusUpdate());
+                	out.flush();
                 }
                 else if(fromServer.equals("warning1")) {
                 	System.out.println(fromServer);
                 	bodyTempSpike();
                 	out.println(statusUpdate());
+                	out.flush();
                 	System.out.println("sent body temp spike");
                 }
                 else if(fromServer.equals("warning2")) {
                 	System.out.println(fromServer);
                 	heartRateSpike();
                 	out.println(statusUpdate());
+                	out.flush();
                 	System.out.println("sent heart rate spike");
                 }
                 else if(fromServer.equals("warning3")) {
@@ -66,14 +70,18 @@ public class Client {
                 	heartRateSpike();
                 	bodyTempSpike();
                 	out.println(statusUpdate());
+                	out.flush();
                 	System.out.println("sent both spikes");
                 }
                 else 
                 {
                 	out.println("unexpected");
+                	out.flush();
                     System.out.println("Unexpected message from server: " + fromServer);
                 }
             }
+            out.close();
+            in.close();
     	}
 
     	private void temperature()
@@ -113,7 +121,7 @@ public class Client {
         private String checkWarning()
         {
                 
-            boolean warning = false;
+            //boolean warning = false;
             String warningList = "";
             if (CurrentBt < bt - 1 || CurrentBt > bt + 1) {
                 warningList = warningList + "temp ";
@@ -130,13 +138,8 @@ public class Client {
             	warningList = warningList + "clear ";
             }
             
-            
-            //if(warning) {
             return "warning " + warningList;
-            //}
-            //else {
-               // return "warning clear";
-            //}
+ 
         }
         
         private String statusUpdate()
@@ -161,7 +164,8 @@ public class Client {
         
         public String getCurrentBt()
         {
-                return "temp " + String.format("%.2g%n", CurrentBt) + " ";
+        	//String e = String.format("%.2g%n", CurrentBt);
+            return "temp " + CurrentBt + " ";
         }
         
         public void close() throws IOException
