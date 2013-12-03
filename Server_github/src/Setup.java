@@ -24,7 +24,7 @@ public class Setup
     public static void main(String[] args) throws IOException
     {
     	NativeLibrary.addSearchPath(
-            RuntimeUtil.getLibVlcLibraryName(), "M:\\vlc-2.1.1"
+            RuntimeUtil.getLibVlcLibraryName(), "./vlc-2.1.1"
         );
         Native.loadLibrary(RuntimeUtil.getLibVlcLibraryName(), LibVlc.class);
             
