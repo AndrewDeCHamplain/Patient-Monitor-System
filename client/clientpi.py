@@ -110,6 +110,7 @@ def read_temp():
         if equals_pos != -1:
             temp_string = lines[1][equals_pos+2:]
             temp_c = float(temp_string) / 1000.0
+            CurrentBt = temp_c
             return temp_c
     else:
         rand = randint(0,50)
@@ -155,7 +156,6 @@ def panic_button():
                  GPIO.output(n,1)	#turn the lights on
                  n = n+1
             panic = True
-            print ("Panic: ", panic)
         
         if GPIO.input(24)==0 and panic == True:    #check if the "everything is ok button" was pressed and if the light has already been turned on (k==0)
             n=7
@@ -163,14 +163,13 @@ def panic_button():
                  GPIO.output(n,0)	#turn the lights off
                  n = n+1
             panic = False
-            print ("Panic: ", panic)
  
 ################
 
 def make_packet():
     global panic
     global ipaddress
-    return getTemp() + getHeartRate() + str(panic)
+    return getTemp() + getHeartRate() + checkWarning()
 
 def send_packet():
     global s
@@ -185,10 +184,23 @@ def getHeartRate():
     return "hr " + str(read_heart()) +" "
 
 def checkWarning():
+    global CurrentBt
+    global CurrentHr
     warningList = ""
     if CurrentBt < bt - 2 or CurrentBt > bt + 2:
         warningList = warningList + "temp "
-    if
+    else:
+        warningList = warningList + "clear "
+    if CurrentHr < hr - 20 or CurrentHr > hr + 30:
+        warningList = warningList + "hr "
+    else:
+        warningList = warningList + "clear "
+    if panic == True:
+        warningList = warningList + "panic "
+    else:
+        warningList = warningList + "clear "
+
+    return "warning " + warningList
 
 
 #RUNNING THE PROGRAM
@@ -202,8 +214,9 @@ if has_tempsensor:
     while read_temp() < roomtemp + 1  != read_temp() > roomtemp + 1:
         pass
     print "Configuring BT..."
-    time.sleep(3)
+    time.sleep(8)
     bt = read_temp()
+    CurrentBt = bt
     print "Your standard BT is " + str(bt)
 
 else:
