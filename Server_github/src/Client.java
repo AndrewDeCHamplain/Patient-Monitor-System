@@ -40,13 +40,7 @@ public class Client {
             {
                 temperature();                                                         //Refresh temperature value
                 heartRate();                                                        //Refresh Heart Rate value
-               // out.println("ready");
-/*
-                for(int w = 0; w < 1000; w++)
-    			{
-    				//wait for shit
-    			}
-*/                
+             
                 if(fromServer.equals("disconnect")) {
                 	System.out.println(fromServer);                
                 	break;                                                                //Stop running
