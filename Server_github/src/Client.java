@@ -18,7 +18,7 @@ public class Client {
         
     public static void main(String args[]) throws UnknownHostException, IOException
     {  
-     	Client c = new Client();
+             Client c = new Client();
         c.run();
         c.close();
     }
@@ -34,77 +34,66 @@ public class Client {
         
     public void run() throws IOException
     {
-    	String fromServer;
-           
-        while(client.isConnected()) {
-        	temperature(); 							//Refresh temperature value
-        	heartRate();							//Refresh Heart Rate value
-        	out.println("ready");
-        	
-            while ((fromServer = in.readLine()).equals("received")) { 
-            	//Wait for server to send a proper signal
+            String fromServer;
+
+            while(!(fromServer = in.readLine()).equals("disconnect"))
+            {
+                temperature();                                                         //Refresh temperature value
+                heartRate();                                                        //Refresh Heart Rate value
+               // out.println("ready");
+/*
+                for(int w = 0; w < 1000; w++)
+    			{
+    				//wait for shit
+    			}
+*/                
+                if(fromServer.equals("disconnect")) {
+                	System.out.println(fromServer);                
+                	break;                                                                //Stop running
+                }
+                else if (fromServer.equals("start")) {
+                	System.out.println(fromServer);
+                	out.println(statusUpdate());
+                }
+                else if(fromServer.equals("warning1")) {
+                	System.out.println(fromServer);
+                	bodyTempSpike();
+                	out.println(statusUpdate());
+                	System.out.println("sent body temp spike");
+                }
+                else if(fromServer.equals("warning2")) {
+                	System.out.println(fromServer);
+                	heartRateSpike();
+                	out.println(statusUpdate());
+                	System.out.println("sent heart rate spike");
+                }
+                else if(fromServer.equals("warning3")) {
+                	System.out.println(fromServer);
+                	heartRateSpike();
+                	bodyTempSpike();
+                	out.println(statusUpdate());
+                	System.out.println("sent both spikes");
+                }
+                else 
+                {
+                	out.println("unexpected");
+                    System.out.println("Unexpected message from server: " + fromServer);
+                }
             }
-            
-            /*
-             * When the server sends something other than "wait",
-             * this if loop determines what that is and reacts based on that
-             * Possible messages from server include "disconnect", "start", "warning1", "warning2" and "warning3"
-             */
-            if(fromServer.equals("disconnect")) {
-                System.out.println(fromServer);		
-                break;								//Stop running
-            }
-            else if (fromServer.equals("start")) {
-                System.out.println(fromServer);
-                out.println(statusUpdate());
-                waitForServer();
-            }
-            else if(fromServer.equals("warning1")) {
-                System.out.println(fromServer);
-                bodyTempSpike();
-                out.println(statusUpdate());
-                System.out.println("sent body temp spike");
-                waitForServer();
-            }
-            else if(fromServer.equals("warning2")) {
-                System.out.println(fromServer);
-                heartRateSpike();
-                out.println(statusUpdate());
-                System.out.println("sent heart rate spike");
-                waitForServer();
-            }
-            else if(fromServer.equals("warning3")) {
-                System.out.println(fromServer);
-                heartRateSpike();
-                bodyTempSpike();
-                out.println(statusUpdate());
-                System.out.println("sent both spikes");
-                waitForServer();
-            }
-            else {
-            	System.out.println("Unexpected message from server: " + fromServer);
-            }
-        }
-    }
-    
-    private void waitForServer() throws IOException {
-    	 while (!in.readLine().equals("received")) {
-         	//blank while loop waits until server is done to continue
-         }
-    }
-    
-    private void temperature()
-    {
-        Random rand = new Random();
-        int m = rand.nextInt(50);
-        double d = m/100.0;
-        if(bt > CurrentBt) {
-        	CurrentBt = CurrentBt + d;
-        }
-        else {
-        	CurrentBt = CurrentBt - d;
-        }
-    }
+    	}
+
+    	private void temperature()
+    	{
+    		Random rand = new Random();
+    		int m = rand.nextInt(50);
+    		double d = m/100.0;
+    		if(bt > CurrentBt) {
+                CurrentBt = CurrentBt + d;
+    		}
+    		else {
+                CurrentBt = CurrentBt - d;
+    		}
+    	}
     
         private void heartRate()
         {
@@ -129,29 +118,36 @@ public class Client {
       
         private String checkWarning()
         {
-        	
+                
             boolean warning = false;
             String warningList = "";
             if (CurrentBt < bt - 1 || CurrentBt > bt + 1) {
                 warningList = warningList + "temp ";
-                warning = true;
+                //warning = true;
+            }else 
+            {
+            	warningList = warningList + "clear ";
             }
             if (CurrentHr < hr - 20 || CurrentHr > hr + 30) {
                 warningList = warningList + "hr ";
-                warning = true;
+                //warning = true;
+            }else
+            {
+            	warningList = warningList + "clear ";
             }
             
-            if(warning) {
-            	return "warning " + warningList;
-            }
-            else {
-                return "warning clear";
-            }
+            
+            //if(warning) {
+            return "warning " + warningList;
+            //}
+            //else {
+               // return "warning clear";
+            //}
         }
         
         private String statusUpdate()
         {
-        	return (getCurrentHr() + getCurrentBt() + checkWarning());
+                return (getCurrentHr() + getCurrentBt() + checkWarning());
         }
         
         private void heartRateSpike()
@@ -166,17 +162,17 @@ public class Client {
         
         public String getCurrentHr()
         {
-        	return "hr " + CurrentHr + " ";
+                return "hr " + CurrentHr + " ";
         }
         
         public String getCurrentBt()
         {
-        	return "temp " + String.format("%.2g%n", CurrentBt) + " ";
+                return "temp " + String.format("%.2g%n", CurrentBt) + " ";
         }
         
         public void close() throws IOException
         {
-        	 out.println("disconnect");
+                 out.println("disconnect");
              System.out.println("Client was disconnected");
              in.close();
              out.close();
