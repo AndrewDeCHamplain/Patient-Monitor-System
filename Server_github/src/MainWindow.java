@@ -2,8 +2,6 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 
-//import javax.media.CannotRealizeException;
-//import javax.media.NoPlayerException;
 import javax.swing.*;
 
 import java.awt.event.ActionEvent;
@@ -25,28 +23,22 @@ public class MainWindow implements ActionListener{
 	private Client_Pi CC_2 = null;
 	private Client_Pi CC_3 = null;
 	private Client_Pi CC_4 = null;
-	private String URL_1 = null;
-	private String URL_2 = null;
-	private String URL_3 = null;
-	private String URL_4 = null;
 
 	private int q = 0;
 	private BitSet x;    //setup number of connected clients
 	private Color unopened = Color.white;
 	private Color connected = Color.green;
 	private Color warn = Color.red;
-	private BitSet warning;
+	private static BitSet warning;
 
 		public MainWindow()
 		{
-			URL_1 = "http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg";
-			URL_3 = "http://10.0.0.24:8080";
-			URL_4 = "http://10.0.0.24:8081";
 			//setup the bits of warning. 0000
 			warning = new BitSet(3);
 			//warning.set(2, 4);    //testing the warnings
 			//setup connected pies. 0000
 			x = new BitSet(3);
+			//warning.set(0, 2);
 			
 			//setup the frame
 			JFrame frame = new JFrame("Server");
@@ -180,46 +172,32 @@ public class MainWindow implements ActionListener{
 		
 		//set the designated client's warning status 
 		//should eventually focus on that pi's video
-		public void Set_Warnings(BitSet W) throws/* NoPlayerException, CannotRealizeException, */IOException 
+		public void Set_Warnings(int j, int u)
 		{
-			warning.and(W);
+			warning.set(j);
 			setupMain();
-			if(!W.get(0))
-			{
-				ReplacePi(1);
-			}else if(!W.get(1))
-			{
-				ReplacePi(2);
-			}else if(!W.get(2))
-			{
-				ReplacePi(3);
-			}else if(!W.get(3))
-			{
-				ReplacePi(4);
-			}
-			
 		}
 		
 		//create a new client_pi up to a max of 4.
-		public void SetupPi(int z) throws /*NoPlayerException, CannotRealizeException,*/ IOException
+		public void SetupPi(int z) throws IOException
 		{
 			String l = "" + z;
-			System.out.println(l);
+			//System.out.println(l);
 			if(z == 1)
 			{
-				CC_1 = new Client_Pi(l, URL_1);
+				CC_1 = new Client_Pi(l, warning, this);
 				Setup.Connect(z, CC_1);
 			}else if(z == 2)
 			{
-				CC_2 = new Client_Pi(l, URL_2);
+				CC_2 = new Client_Pi(l, warning, this);
 				Setup.Connect(z, CC_2);
 			}else if(z == 3)
 			{
-				CC_3 = new Client_Pi(l, URL_3);
+				CC_3 = new Client_Pi(l, warning, this);
 				Setup.Connect(z, CC_3);
 			}else if(z == 4)
 			{
-				CC_4 = new Client_Pi(l, URL_4);
+				CC_4 = new Client_Pi(l, warning, this);
 				Setup.Connect(z, CC_4);
 			}
 			
@@ -231,25 +209,25 @@ public class MainWindow implements ActionListener{
 			//clear client's frame, set client to null and reset main window
 			if(z == 1)
 			{
-				CC_1.ClearFrame();
+				CC_1.CloseFrame();
 				CC_1 = null;
 				x.set(0, false);
 				setupMain();
 			}else if(z == 2)
 			{
-				CC_2.ClearFrame();
+				CC_2.CloseFrame();
 				CC_2 = null;
 				x.set(1, false);
 				setupMain();
 			}else if(z == 3)
 			{
-				CC_3.ClearFrame();
+				CC_3.CloseFrame();
 				CC_3 = null;
 				x.set(2, false);
 				setupMain();
 			}else if(z == 4)
 			{
-				CC_4.ClearFrame();
+				CC_4.CloseFrame();
 				CC_4 = null;
 				x.set(3, false);
 				setupMain();
@@ -260,24 +238,20 @@ public class MainWindow implements ActionListener{
 		//used to clear or set the warning response
 		public void ReplacePi(int h) throws IOException
 		{
-			String s = "" + h;
-			System.out.println(s);
+			//String s = "" + h;
+			//System.out.println(s);
 			if(h == 1)
 			{
 				CC_1.ClearFrame();
-				CC_1.setWindow(s);
 			}else if(h == 2)
 			{
 				CC_2.ClearFrame();
-				CC_2.setWindow(s);
 			}else if(h == 3)
 			{
 				CC_3.ClearFrame();
-				CC_3.setWindow(s);
 			}else if(h == 4)
 			{
 				CC_4.ClearFrame();
-				CC_4.setWindow(s);
 			}
 		}
 		
@@ -293,9 +267,9 @@ public class MainWindow implements ActionListener{
 				if(b.equals(Connect))
 				{	
 					//connect a new client
-					System.out.println(x.nextClearBit(3));
+					//System.out.println(x.nextClearBit(3));
 					x.set(x.nextClearBit(0));
-					System.out.println("button pressed.");
+					//System.out.println("button pressed.");
 					if(x.get(0) && CC_1 == null)
 					{
 						try {
@@ -304,7 +278,6 @@ public class MainWindow implements ActionListener{
 							e1.printStackTrace();
 						}
 						q++;
-						setupMain();
 						
 					}else if(x.get(1) && CC_2 == null)
 					{
@@ -313,8 +286,7 @@ public class MainWindow implements ActionListener{
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
-						q++;
-						setupMain();	
+						q++;	
 					}else if(x.get(2) && CC_3 == null)
 					{
 						//connection for client 3
@@ -324,7 +296,6 @@ public class MainWindow implements ActionListener{
 							e1.printStackTrace();
 						}
 						q++;
-						setupMain();
 						//warning.set(0, 2); 
 						//ReplacePi(1);    //testing reseting client 1		
 					}else if(x.get(3) && CC_4 == null)
@@ -336,96 +307,104 @@ public class MainWindow implements ActionListener{
 							e1.printStackTrace();
 						}
 						q++;
-						setupMain();
 						//warning.set(0, 4); 
 						//setupMain();
 					}
 				}else if(b.equals(Cpi_1))  //if first client button
 				{
-					q--;
-					System.out.println("pressed warning button 1.");
+					
+					//System.out.println("pressed warning button 1.");
 					if(warning.get(0))   // and if warning is on
 					{
-						System.out.println("resetting");
+						//System.out.println("resetting");
 						//reset warning
 						warning.clear(0);
+						CC_1.clearTempWarn();
+						CC_1.clearHRWarn();
+						CC_1.clearPanic();
 						//reset main window
-						setupMain();
 					}else if(!warning.get(0) && x.get(0))
 					{
-						System.out.println("Disconnecting pi #1");
+						//System.out.println("Disconnecting pi #1");
 						try {
 							DisconnectPi(1);
+							q--;
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
 				}else if(b.equals(Cpi_2))  //if second client button
 				{
-					q--;
-					System.out.println("pressed warning button 2.");
+					//System.out.println("pressed warning button 2.");
 					if(warning.get(1))   // and if warning is on
 					{
-						System.out.println("resetting");
+						//System.out.println("resetting");
 						//reset warning
 						warning.clear(1);
+						CC_2.clearTempWarn();
+						CC_2.clearHRWarn();
+						CC_2.clearPanic();
 						//reset main window
-						setupMain();
 					}else if(!warning.get(1) && x.get(1))
 					{
 						//if warning is not on, then disconnect
-						System.out.println("Disconnecting pi #2");
+						//System.out.println("Disconnecting pi #2");
 						try {
 							DisconnectPi(2);
+							q--;
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
 				}else if(b.equals(Cpi_3))  //if third client button
 				{
-					System.out.println("pressed warning button 3.");
+					//System.out.println("pressed warning button 3.");
 					if(warning.get(2))   // and if warning is on
 					{
-						System.out.println("resetting");
+						//System.out.println("resetting");
 						//reset warning
 						warning.clear(2);
+						CC_3.clearTempWarn();
+						CC_3.clearHRWarn();
+						CC_4.clearPanic();
 						//reset main window
-						setupMain();
 					}else if(!warning.get(2) && x.get(2))
 					{
-						q--;
 						//if warning is not on, then disconnect
-						System.out.println("Disconnecting pi #3");
+						//System.out.println("Disconnecting pi #3");
 						try {
 							DisconnectPi(3);
+							q--;
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
 				}else if(b.equals(Cpi_4))  //if fourth client button
 				{
-
-					System.out.println("pressed warning button 4.");
+					//System.out.println("pressed warning button 4.");
 					if(warning.get(3))   // and if warning is on
 					{
-						System.out.println("resetting");
+						//System.out.println("resetting");
 						//reset warning
 						warning.clear(3);
+						CC_4.clearTempWarn();
+						CC_4.clearHRWarn();
+						CC_4.clearPanic();
 						//reset main window
-						setupMain();
 					}else if(!warning.get(3) && x.get(3))
 					{
-						q--;
 						//if warning is not on, then disconnect
-						System.out.println("Disconnecting pi #4");
+						//System.out.println("Disconnecting pi #4");
 						try {
 							DisconnectPi(4);
+							q--;
 						} catch (IOException e1) {
 							e1.printStackTrace();
 						}
 					}
 					
 				}
+				setupMain();
 				
 			}
 		}
