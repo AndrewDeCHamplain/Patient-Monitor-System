@@ -185,19 +185,19 @@ public class MainWindow implements ActionListener{
 			//System.out.println(l);
 			if(z == 1)
 			{
-				CC_1 = new Client_Pi(l, warning, this);
+				CC_1 = new Client_Pi(l, this);
 				Setup.Connect(z, CC_1);
 			}else if(z == 2)
 			{
-				CC_2 = new Client_Pi(l, warning, this);
+				CC_2 = new Client_Pi(l, this);
 				Setup.Connect(z, CC_2);
 			}else if(z == 3)
 			{
-				CC_3 = new Client_Pi(l, warning, this);
+				CC_3 = new Client_Pi(l, this);
 				Setup.Connect(z, CC_3);
 			}else if(z == 4)
 			{
-				CC_4 = new Client_Pi(l, warning, this);
+				CC_4 = new Client_Pi(l, this);
 				Setup.Connect(z, CC_4);
 			}
 			
