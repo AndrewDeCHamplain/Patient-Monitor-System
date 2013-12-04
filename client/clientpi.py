@@ -167,21 +167,20 @@ def panic_button():
 ################
 
 def make_packet():
-    global panic
-    global ipaddress
     return getTemp() + getHeartRate() + checkWarning()
 
 def send_packet():
     global s
     checkWarning()
-    #s.send(make_packet())
-    print make_packet()
+    string = make_packet()
+    s.sendto(string, (serverip, 8081))
+    print string
     
 def getTemp():
-    return "temp " + str(read_temp()) +" "
+    return "temp " +str(read_temp()) + " "
 
 def getHeartRate():
-    return "hr " + str(read_heart()) +" "
+    return "hr " + str(read_heart()) + " "
 
 def checkWarning():
     global CurrentBt
@@ -208,35 +207,60 @@ def checkWarning():
 configuration = "config.xml"
 check_config(configuration)
 hr = 70
-if has_tempsensor:
-    print "Hold temperature node for auto config"
-    roomtemp = read_temp()
-    while read_temp() < roomtemp + 1  != read_temp() > roomtemp + 1:
+while True:
+    try:
+        running = True
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+        s.bind(("", 8081))
+        #s.connect((serverip,8081))
+        print s.recv(1024)
+        s.sendto("starting ", (serverip, 8081))
+        #s.close()
+        #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        #s.connect((serverip,8081))
+        #s.send("starting ")
+        if has_tempsensor:
+            read_temp()
+            time.sleep(1)
+            print "Hold temperature node for auto config"
+            roomtemp = read_temp() 
+            while read_temp() < roomtemp + 1  != read_temp() > roomtemp - 1:
+                pass
+            print "Configuring BT..."
+            time.sleep(8)
+            bt = read_temp()
+            CurrentBt = bt
+            print "Your standard BT is " + str(bt)
+
+        else:
+
+            bt = 37
+            CurrentBt=bt
+        CurrentHr=hr
+        panic = False
+        try: 
+            t1 = Thread(target=panic_button, args = ())	#make a thread for the buttons
+            t1.daemon=True		#setting thread as background thread
+            t1.start()			# starts the thread
+    
+        
+            while running:
+                send_packet()
+                #s.close()
+                #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                #s.connect((serverip,8081))
+                time.sleep(1)
+                msg = s.recv(1024)
+                print msg
+                if msg == 'disconnect':
+                    running = False
+            s.close()   
+        except KeyboardInterrupt:
+            print "Program Ended"	# allows us to close the thread when Ctrl+C pressed
+    
+    except socket.error as e:
+        print "socket error", e
         pass
-    print "Configuring BT..."
-    time.sleep(8)
-    bt = read_temp()
-    CurrentBt = bt
-    print "Your standard BT is " + str(bt)
-
-else:
-    bt = 37
-    CurrentBt=bt
-CurrentHr=hr
-panic = False
-try: 
-    t1 = Thread(target=panic_button, args = ())	#make a thread for the buttons
-    t1.daemon=True		#setting thread as background thread
-    t1.start()			# starts the thread
-    #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    #s.connect((hostname, 5050))
-    while True:
-        send_packet()
-        time.sleep(1)
-except KeyboardInterrupt:
-    print "Program Ended"	# allows us to close the thread when Ctrl+C pressed
-
 
         
-
         
