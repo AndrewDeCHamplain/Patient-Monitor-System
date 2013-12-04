@@ -34,6 +34,7 @@ public class Client_Pi extends JFrame {
         private JTextField temp;
         private JTextField hr;
         private JTextField panic;
+        private JTextArea Label;
         private int t = 0;
         private String Z;
         private Socket socket;
@@ -123,11 +124,10 @@ public class Client_Pi extends JFrame {
               panic.setEditable(false);
                         
              bottom.add(values);
-             JTextArea Label = new JTextArea();
-             Label.append(" hello!\n");
-             Label.append(" hello!\n");
-             Label.append(" hello!\n");
-             Label.append(" hello!");
+             Label = new JTextArea();
+             //Label.append(" hello!\n");
+             //Label.append(" hello!\n");
+             //Label.append(" hello!");
              Label.setEditable(false);
              bottom.add(Label);
              
@@ -139,14 +139,12 @@ public class Client_Pi extends JFrame {
             Piframe.setVisible(true);
             videoPanel.setVisible(false);
             
+            mediaPlayerComponent.getMediaPlayer().playMedia("http://10.0.0.21:8080/?action=stream");
             //mediaPlayerComponent.getMediaPlayer().playMedia("http:/" + URL  );
             //mediaPlayerComponent.getMediaPlayer().playMedia("http://" + URL + "/?action=stream");
             //mediaPlayerComponent.getMediaPlayer().playMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
-            mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
+            //mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
             
-			//setTempWarn();
-			//setHRWarn();
-			//setPanicWarn();
         }
         
         public void CloseFrame() throws IOException
@@ -211,6 +209,14 @@ public class Client_Pi extends JFrame {
         public void setURL(String URL)
         {
         	this.URL = URL;
+            //String IP = URL.substring(1, 10);
+            //Label.append(IP);
+        	Label.append(Setup.parse(URL));
+        }
+        
+        public void setLabel(String lab)
+        {
+        	Label.append(lab);
         }
         
         public void setTempText(String in)
