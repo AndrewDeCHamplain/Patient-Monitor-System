@@ -5,6 +5,7 @@
 		<age>23</age>
 		<weight>160</weight>
 		<height>167</height>
+        <heartrate>75</heartrate>
 	</patient>
 	<patient IP="10.0.0.22">
 		<firstname>Jeffrey</firstname>
@@ -12,6 +13,7 @@
 		<age>20</age>
 		<weight>135</weight>
 		<height>185</height>
+        <heartrate>65</heartrate>
 	</patient>
 	<patient IP="10.0.0.23">
 		<firstname>Chris</firstname>
@@ -19,6 +21,7 @@
 		<age>20</age>
 		<weight>118</weight>
 		<height>170</height>
+        <heartrate>60</heartrate>
 	</patient>
 	<patient IP="10.0.0.24">
 		<firstname>Andrew</firstname>
@@ -26,5 +29,6 @@
 		<age>20</age>
 		<weight>175</weight>
 		<height>185</height>
+        <heartrate>70</heartrate>
 	</patient>
 </hospital>
