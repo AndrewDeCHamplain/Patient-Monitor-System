@@ -1,8 +1,7 @@
 import java.awt.Color;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.BitSet;
@@ -11,16 +10,13 @@ import java.util.BitSet;
 
 
 
-//import javax.media.CannotRealizeException;
-//import javax.media.NoPlayerException;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-//import javax.swing.JRootPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-//import javax.swing.WindowConstants;
 
 
 import javax.swing.WindowConstants;
@@ -28,153 +24,169 @@ import javax.swing.WindowConstants;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 
-//import javax.media.*;
-
-
 @SuppressWarnings("serial")
-public class Client_Pi extends JFrame implements ActionListener{
+public class Client_Pi extends JFrame {
 
-        @SuppressWarnings("unused")
-        private String URL = null;
+		private String URL = null;
         private JFrame Piframe;
         private Container contentPanePi;
         public JToggleButton Pi_soundButton;
         private JTextField temp;
         private JTextField hr;
+        private JTextField panic;
         private int t = 0;
         private String Z;
         private Socket socket;
         private int n;
         private BitSet warn;
+        private BitSet warning;
         private ClientThread thread;
         private EmbeddedMediaPlayerComponent mediaPlayerComponent;
+        private String tempText;
+        private String hrText;
+        private MainWindow Main;
         
-        public Client_Pi(String z, String ip) //throws NoPlayerException, CannotRealizeException, IOException
+        public Client_Pi(String z, BitSet warning, MainWindow main) 
         {
+        		this.Main = main;
+        		this.warning = warning;
                 n = Integer.parseInt(z);
-                URL = ip;
                 Z = z;
-                setWindow(z);
+                CreateWindow(z);
                 warn = new BitSet(3);
         }
-        public void setWindow(String Z) //throws NoPlayerException, CannotRealizeException, IOException
+        
+        public void CreateWindow(String Z)
         {
-            Piframe = new JFrame("Client " + Z);
-
-                    mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
-                    Piframe.setContentPane(mediaPlayerComponent);
-                    setLocationOnScreen();
+        	Piframe = new JFrame("Client " + Z);
+        	setWindow(Z);
+        	tempText = "Connected";
+        	hrText = "Connected";
+        }
+        public void setWindow(String Z)
+        {
+            mediaPlayerComponent = new EmbeddedMediaPlayerComponent();
+            Piframe.setContentPane(mediaPlayerComponent);
+            setLocationOnScreen();
+            Piframe.setMinimumSize(new Dimension(650, 540));            
                     
             contentPanePi = Piframe.getContentPane();
             contentPanePi.setLayout(new BoxLayout(contentPanePi, BoxLayout.Y_AXIS));
-            contentPanePi.setSize(540, 640);
             
+            JPanel videoPanel = new JPanel();
+            videoPanel.setPreferredSize(new Dimension(640, 480));
+            contentPanePi.add(videoPanel);
+
             
-            JPanel Pi_sound = new JPanel();
-            Pi_sound.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-            Pi_sound.setLayout(new GridLayout(1, 2));
-            Pi_soundButton = new JToggleButton("Pause video");
-            Pi_sound.add(Pi_soundButton);
-            Pi_sound.setSize(30, 640);
+            JPanel bottom = new JPanel();
+            bottom.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+            bottom.setLayout(new BoxLayout(bottom, BoxLayout.X_AXIS));
+            bottom.setLayout(new GridLayout(1, 2));
+            bottom.setMaximumSize(new Dimension(640, 100));
+
+            JPanel values = new JPanel();
+            values.setBorder(BorderFactory.createLineBorder(Color.lightGray));
+            values.setLayout(new BoxLayout(values, BoxLayout.Y_AXIS));
+            values.setLayout(new GridLayout(3, 2));
             
-            Pi_soundButton.addActionListener(this);
-            
-            
-            JPanel Pi_sensors = new JPanel();
-            Pi_sensors.setBorder(BorderFactory.createLineBorder(Color.lightGray));
-            Pi_sensors.setLayout(new BoxLayout(Pi_sensors, BoxLayout.X_AXIS));
-            Pi_sensors.setSize(30 ,640);
-            Pi_sound.add(Pi_sensors);
+            JTextField tempLabel = new JTextField();
+            tempLabel.setText("Temperature");
+            values.add(tempLabel);
+            tempLabel.setEditable(false);
             
              temp = new JTextField();
-             Pi_sensors.add(temp);
-             temp.setText("Connected");
+             values.add(temp);
+             temp.setText(tempText);
              temp.setHorizontalAlignment(JTextField.CENTER);
              temp.setEditable(false);
              
+             JTextField hrLabel = new JTextField();
+             hrLabel.setText("Heart Rate");
+             values.add(hrLabel);
+             hrLabel.setEditable(false);
+             
              hr = new JTextField();
-             Pi_sensors.add(hr);
-             hr.setText("Connected");
+             values.add(hr);
+             hr.setText(hrText);
              hr.setHorizontalAlignment(JTextField.CENTER);
              hr.setEditable(false);
+             
+             JTextField panicLabel = new JTextField();
+             panicLabel.setText("Panic Button");
+             values.add(panicLabel);
+             panicLabel.setEditable(false);
+             
+              panic = new JTextField();
+              values.add(panic);
+              panic.setText("safe");
+              panic.setHorizontalAlignment(JTextField.CENTER);
+              panic.setEditable(false);
                         
-            contentPanePi.add(Pi_sound);
+             bottom.add(values);
+             JTextArea Label = new JTextArea();
+             Label.append(" hello!\n");
+             Label.append(" hello!\n");
+             Label.append(" hello!\n");
+             Label.append(" hello!");
+             Label.setEditable(false);
+             bottom.add(Label);
+             
+            contentPanePi.add(bottom);
 
-            //Piframe.setUndecorated(true);
-            //getRootPane().setWindowDecorationStyle(JRootPane.NONE);
             Piframe.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
              
             Piframe.pack();
-            //Piframe.setResizable(false);
             Piframe.setVisible(true);
+            videoPanel.setVisible(false);
             
-            mediaPlayerComponent.getMediaPlayer().playMedia("http://10.0.0.21:8080/?action=stream");
+            //mediaPlayerComponent.getMediaPlayer().playMedia("http:/" + URL  );
+            //mediaPlayerComponent.getMediaPlayer().playMedia("http://" + URL + "/?action=stream");
             //mediaPlayerComponent.getMediaPlayer().playMedia("http://hubblesource.stsci.edu/sources/video/clips/details/images/hst_1.mpg");
-            //mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
+            mediaPlayerComponent.getMediaPlayer().playMedia("M:\\Crystallize-LindseyStirling.mp4");
+            
+			//setTempWarn();
+			//setHRWarn();
+			//setPanicWarn();
         }
         
-        public void ClearFrame() throws IOException
+        public void CloseFrame() throws IOException
         {
-                thread.stopConnection();
-                mediaPlayerComponent.release();
+            thread.stopConnection();
+            mediaPlayerComponent.release();
             Piframe.setVisible(false);
             Piframe.dispose();
             Setup.disconnect(n);
         }
         
-        
-        
-        public void actionPerformed(ActionEvent e) {
-                Object o = e.getSource();
-                
-                if(o instanceof JToggleButton)
-                {
-                        if(t == 0)
-                        {
-                                t++;
-                                System.out.println("Client #" + Z + " Video toggled on.");
-                                //Pi_vid.play();
-                                
-                        }else
-                        {
-                                t = 0;
-                                System.out.println("Client #" + Z + " Video toggled off.");
-                                //Pi_vid.pause();
-                                
-                        }
-                        //play sound
-                }
+        public void ClearFrame()
+        {
+        	mediaPlayerComponent.release();
+        	Piframe.setVisible(false);
+        	contentPanePi.removeAll();
+			contentPanePi.revalidate();
+			contentPanePi.repaint();
+			setWindow(Z);
         }
-
+        
+/*
             //sets the warning bits
             //if q = 0. then clear the warnings
             // if q = 1, then set the warning for this client
         public BitSet Set(int q)
         {
+        		warn = new BitSet(3);
                 if(q == 1)
                 {
-                        if(n == 0)
-                        {
-                                warn.set(0, true);
-                                return warn;
-                        }
-                        else if(n == 1)
-                        {
-                                warn.set(1, true);
-                                return warn;
-                        }else if(n == 2)
-                        {
-                                warn.set(2, true);
-                                return warn;
-                        }else if(n == 3)
-                        {
-                                warn.set(3, true);
-                                return warn;
-                        }
+                       warning.set(n, true);
+                       return warn;
+                       
+                }else
+                {
+                	warning.set(n, false);
+                	return warning;
                 }
-                warn = new BitSet(3);
-                return warn;
         }
+        */
         
         public Client_Pi Who()
         {
@@ -196,16 +208,57 @@ public class Client_Pi extends JFrame implements ActionListener{
                 return socket;
         }
         
+        public void setURL(String URL)
+        {
+        	this.URL = URL;
+        }
+        
         public void setTempText(String in)
         {
-
-             temp.setText(in);
+        	in += "   ";
+        	tempText = in.substring(0, 5);
+        	temp.setText(tempText);
         }
         
         public void setHRText(String in)
         {
-
-             hr.setText(in);
+        	hrText = in;
+        	hr.setText(hrText);
+        }
+        
+        public void setTempWarn()
+        {
+        	temp.setBackground(new Color(209, 68, 68));
+        	Main.Set_Warnings(n-1, 1);
+        }
+        
+        public void setHRWarn()
+        {
+        	hr.setBackground(new Color(209, 68, 68));
+        	Main.Set_Warnings(n-1, 1);
+        }
+        
+        public void setPanicWarn()
+        {
+        	panic.setBackground(new Color(209, 68, 68));
+        	panic.setText("PANIC!");
+        	Main.Set_Warnings(n-1, 1);
+        }
+        
+        public void clearTempWarn()
+        {
+        	temp.setBackground(Color.white);
+        }
+        
+        public void clearHRWarn()
+        {
+        	hr.setBackground(Color.white);
+        }
+        
+        public void clearPanic()
+        {
+        	panic.setBackground(Color.white);
+        	panic.setText("safe");
         }
         
         public static int GetScreenWorkingWidth() {
@@ -231,5 +284,10 @@ public class Client_Pi extends JFrame implements ActionListener{
                 {
                         Piframe.setLocation((GetScreenWorkingWidth()/2)+250, (GetScreenWorkingHeight()/2));
                 }
+        }
+        
+        public void hold() throws InterruptedException
+        {
+        	Thread.sleep(1000);
         }
 }
