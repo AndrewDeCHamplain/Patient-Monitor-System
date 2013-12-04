@@ -4,8 +4,12 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Calendar;
 
-
 @SuppressWarnings("serial")
+
+/*
+ *The Digital Clock runs in the background of MainWindow, showing the current time.
+ *That's about it
+ */
 public class DigitalClock extends JPanel{
 
     String stringTime;
@@ -38,31 +42,32 @@ public class DigitalClock extends JPanel{
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
 
+        /*Retrieves information from the System Clock*/
         Calendar now = Calendar.getInstance();
         hour = now.get(Calendar.HOUR_OF_DAY);
         minute = now.get(Calendar.MINUTE);
         second = now.get(Calendar.SECOND);
 
+        /*Formatting of the time when displaying a single-digit value in any field*/
         if (hour < 10) {
             this.correctionHour = "0";
         }
         if (hour >= 10) {
             this.correctionHour = "";
         }
-
         if (minute < 10) {
             this.correctionMinute = "0";
         }
         if (minute >= 10) {
             this.correctionMinute = "";
         }
-
         if (second < 10) {
             this.correctionSecond = "0";
         }
         if (second >= 10) {
             this.correctionSecond = "";
         }
+        
         setStringTime(correctionHour + hour + ":" + correctionMinute+ minute + ":" + correctionSecond + second);
         g.setColor(Color.BLACK);
         int length = findMinimumBetweenTwoNumbers(this.getWidth(),this.getHeight());
