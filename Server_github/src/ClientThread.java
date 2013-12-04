@@ -2,6 +2,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.net.Socket;
 
 
@@ -14,17 +17,34 @@ public class ClientThread extends Thread{
     private Client_Pi who;
     private String fromClient;
     private MainWindow gui;
+    DatagramSocket sendSocket, receiveSocket;
+    DatagramPacket sendPacket, receivePacket;
+    private int t;
+    private String IP;
+    private String temp;
+    private String hr;
+    private String warn;
+    private int port;
 
-    public ClientThread(Socket clientsocket, int i, Client_Pi who, MainWindow gui) throws IOException
+    public ClientThread(Socket clientsocket, int i, Client_Pi who, MainWindow gui, String IP, int port) throws IOException
     {
+    	this.port = port;
+    	this.IP = IP;
         this.gui = gui;
         this.who = who;
         this.socket = clientsocket;
         Pinum = i;
         who.setThread(this);
         
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        out = new PrintWriter(socket.getOutputStream(), true);
+        receiveSocket = new DatagramSocket(port);
+        sendSocket = new DatagramSocket();
+        
+        t = 0;
+        temp = "";
+        hr = "";
+        warn = "";
+        //in = new BufferedReader(new InputStreamReader(receiveSocket.getInputStream()));
+        //out = new PrintWriter(socket.getOutputStream(), true);
     }
         
     public void run()
@@ -39,22 +59,34 @@ public class ClientThread extends Thread{
         //a loop to keep receiving
     public void receive() throws IOException, InterruptedException
     {
+
+        byte[] buf = new byte[1024];
+        receivePacket = new DatagramPacket(buf, 1024);
+        
+    	String text = "start";
+    	sendPacket = new DatagramPacket(text.getBytes(), text.length(), InetAddress.getByName(IP), port);
         //setup delimiter
-        who.setURL(socket.getRemoteSocketAddress().toString());
-        System.out.println(socket.getRemoteSocketAddress().toString());
+        who.setURL(IP);
+        //System.out.println(socket.getRemoteSocketAddress().toString());
                         
         String delims = " ";
-        out.println("start");
-        //check if it equals the disconnect command
-        while(!(fromClient = in.readLine()).equals("disconnect"))
+        //sendPacket.setData("start".getBytes());
+        receiveSocket.send(sendPacket);
+        
+        	
+        receiveSocket.receive(receivePacket);
+        fromClient = new String(buf);
+        while(!(fromClient).equals("disconnect"))
         {
-
+        	System.out.println(fromClient);
         	String[] tokens = fromClient.split(delims);
         	//System.out.println(tokens[0]);
         	String HeartRate = "", Temperature = "";
         	
-        	for (int i = 0; i < 5;i += 2) {
+        	for (int i = 0; i < 5;i += 2) 
+        	{
         		String statusType = tokens[i];
+        		System.out.println(tokens[i]);
         		if (statusType.equals("temp")) 
         		{
         			//if it is a temperature, set the new temperature value
@@ -107,8 +139,7 @@ public class ClientThread extends Thread{
                              }else if (tokens[i+t].equals("panic"))
                              {
                             	  	//add panic button logic
-                         			who.setTempWarn();
-                         			who.setHRWarn();
+                         			who.setPanicWarn();
                              }else
                              {
                                    System.out.println("Unexpected Warning Type: " + tokens[i + t]);
@@ -127,9 +158,15 @@ public class ClientThread extends Thread{
                 //out.println("received");
                 }
         		who.hold();
-                out.println("start");        
-                        
-        	}
+        		receiveSocket.receive(receivePacket);
+                fromClient =  new String(buf);
+        		//byte[] temp = new byte[1];
+        		
+        		//sendPacket = new DatagramPacket(temp, 1, InetAddress.getByName("10.0.0.21"), 8081);
+        		//sendSocket.send(sendPacket);
+                //out.println("start");        
+    		       
+    		}
         	disconnect();
         }
         
