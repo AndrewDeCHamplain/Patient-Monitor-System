@@ -22,7 +22,7 @@ global configuration
 global panic
 global s
 global port
-global heartrate
+global avg_heartrate
 
 # INITIALIZING GERTBOARD BUTTONS AND LIGHTS
 GPIO.setwarnings(False)
@@ -47,12 +47,7 @@ previous_status = ''
 z = 0
 x = 0
 
-#INITIALIZING SYSTEM CONSTANTS & ARGUMENTS
-os.system('modprobe w1-gpio')
-os.system('modprobe w1-therm')
-base_dir = '/sys/bus/w1/devices/'
-device_folder = glob.glob(base_dir + '28*')[0]
-device_file = device_folder + '/w1_slave'
+
 
 def check_config(file_name):
     global has_tempsensor
@@ -60,7 +55,7 @@ def check_config(file_name):
     global has_hrmonitor
     global ipaddress
     global serverip
-    global heartrate
+    global avg_heartrate
     global port
     file = file_name
     handler = open(file).read()
@@ -83,14 +78,22 @@ def check_config(file_name):
         has_tempsensor = 1
     else:
          has_tempsensor = 0
-
     print has_tempsensor
+
+    avg_heartrate = soup.find('heartrate').string
+    print avg_heartrate
+
     ipaddress = soup.find('ipaddress').string
     print ipaddress
 
-    serverip = soup.find('server').string
+    port = int(soup.find('port').string)
+    print str(port)
 
+    serverip = soup.find('server').string
     print serverip
+    
+    
+    
 
 #This function reads in the 12 bit temperature word from the I2C data pin
 def read_temp_raw():
@@ -210,7 +213,7 @@ def checkWarning():
 
 configuration = "config.xml"
 check_config(configuration)
-hr = heartrate
+hr = int(avg_heartrate)
 while True:
     try:
         running = True
@@ -219,6 +222,12 @@ while True:
         print s.recv(1024)
         s.sendto("starting ", (serverip, port))
         if has_tempsensor:
+            #INITIALIZING SYSTEM CONSTANTS & ARGUMENTS
+            os.system('modprobe w1-gpio')
+            os.system('modprobe w1-therm')
+            base_dir = '/sys/bus/w1/devices/'
+            device_folder = glob.glob(base_dir + '28*')[0]
+            device_file = device_folder + '/w1_slave'
             read_temp()
             time.sleep(1)
             print "Hold temperature node for auto config"
@@ -230,11 +239,12 @@ while True:
             bt = read_temp()
             CurrentBt = bt
             print "Your standard BT is " + str(bt)
-
+        
         else:
 
             bt = 37
             CurrentBt=bt
+        
         CurrentHr=hr
         panic = False
         try:
