@@ -21,6 +21,8 @@ global client
 global configuration
 global panic
 global s
+global port
+global heartrate
 
 # INITIALIZING GERTBOARD BUTTONS AND LIGHTS
 GPIO.setwarnings(False)
@@ -58,27 +60,29 @@ def check_config(file_name):
     global has_hrmonitor
     global ipaddress
     global serverip
+    global heartrate
+    global port
     file = file_name
     handler = open(file).read()
     soup = Soup(handler)
     if (soup.find('camera').string == "TRUE"):
         has_webcam = 1
     else:
-	    has_webcam = 0
+         has_webcam = 0
 
     print has_webcam
 
     if (soup.find('heartmon').string == "TRUE"):
         has_hrmonitor = 1
     else:
-	    has_hrmonitor = 0
+         has_hrmonitor = 0
 
     print has_hrmonitor
 
     if (soup.find('tempmon').string == "TRUE"):
         has_tempsensor = 1
     else:
-	    has_tempsensor = 0
+         has_tempsensor = 0
 
     print has_tempsensor
     ipaddress = soup.find('ipaddress').string
@@ -123,7 +127,7 @@ def read_temp():
         return CurrentBt
 
 def read_heart():
-    global has_hrmonitor 
+    global has_hrmonitor
     global CurrentHr
     if (has_hrmonitor):
         #should never get here, since none of our raspberry pi's have a HR monitor. This method can be expanded to accomodate one if they are purchased in future.
@@ -150,17 +154,17 @@ def read_heart():
 def panic_button():
     global panic
     while True:
-        if GPIO.input(25)==0 and panic == False: 	#check if the "panic button" was pressed
+        if GPIO.input(25)==0 and panic == False:         #check if the "panic button" was pressed
             n=7
             while n<12:
-                 GPIO.output(n,1)	#turn the lights on
+                 GPIO.output(n,1)        #turn the lights on
                  n = n+1
             panic = True
         
-        if GPIO.input(24)==0 and panic == True:    #check if the "everything is ok button" was pressed and if the light has already been turned on (k==0)
+        if GPIO.input(24)==0 and panic == True: #check if the "everything is ok button" was pressed and if the light has already been turned on (k==0)
             n=7
             while n<12:
-                 GPIO.output(n,0)	#turn the lights off
+                 GPIO.output(n,0)        #turn the lights off
                  n = n+1
             panic = False
  
@@ -173,7 +177,7 @@ def send_packet():
     global s
     checkWarning()
     string = make_packet()
-    s.sendto(string, (serverip, 8081))
+    s.sendto(string, (serverip, port))
     print string
     
 def getTemp():
@@ -206,25 +210,20 @@ def checkWarning():
 
 configuration = "config.xml"
 check_config(configuration)
-hr = 70
+hr = heartrate
 while True:
     try:
         running = True
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-        s.bind(("", 8081))
-        #s.connect((serverip,8081))
+        s.bind(("", port))
         print s.recv(1024)
-        s.sendto("starting ", (serverip, 8081))
-        #s.close()
-        #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        #s.connect((serverip,8081))
-        #s.send("starting ")
+        s.sendto("starting ", (serverip, port))
         if has_tempsensor:
             read_temp()
             time.sleep(1)
             print "Hold temperature node for auto config"
-            roomtemp = read_temp() 
-            while read_temp() < roomtemp + 1  != read_temp() > roomtemp - 1:
+            roomtemp = read_temp()
+            while read_temp() < roomtemp + 1 != read_temp() > roomtemp - 1:
                 pass
             print "Configuring BT..."
             time.sleep(8)
@@ -238,29 +237,20 @@ while True:
             CurrentBt=bt
         CurrentHr=hr
         panic = False
-        try: 
-            t1 = Thread(target=panic_button, args = ())	#make a thread for the buttons
-            t1.daemon=True		#setting thread as background thread
-            t1.start()			# starts the thread
+        try:
+            t1 = Thread(target=panic_button, args = ())        #make a thread for the buttons
+            t1.daemon=True                #setting thread as background thread
+            t1.start()                        # starts the thread
     
         
             while running:
                 send_packet()
-                #s.close()
-                #s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                #s.connect((serverip,8081))
                 time.sleep(1)
-                msg = s.recv(1024)
-                print msg
-                if msg == 'disconnect':
-                    running = False
-            s.close()   
+
+            s.close()
         except KeyboardInterrupt:
-            print "Program Ended"	# allows us to close the thread when Ctrl+C pressed
+            print "Program Ended"        # allows us to close the thread when Ctrl+C pressed
     
     except socket.error as e:
         print "socket error", e
         pass
-
-        
-        
