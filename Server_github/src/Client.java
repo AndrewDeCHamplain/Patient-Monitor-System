@@ -2,8 +2,6 @@ import java.net.*;
 import java.io.*;
 import java.util.Random;
 
-
-
 public class Client {
         
     private final int bt = 37;
