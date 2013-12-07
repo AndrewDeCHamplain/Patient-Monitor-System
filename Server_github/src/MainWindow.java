@@ -355,7 +355,7 @@ public class MainWindow implements ActionListener{
 					warning.clear(0);
 					CC_1.clearTempWarn();
 					CC_1.clearHRWarn();
-					CC_1.clearPanic();
+					CC_1.clearPanicWarn();
 					//reset main window
 				}else if(!warning.get(0) && x.get(0))
 				{
@@ -374,7 +374,7 @@ public class MainWindow implements ActionListener{
 					warning.clear(1);
 					CC_2.clearTempWarn();
 					CC_2.clearHRWarn();
-					CC_2.clearPanic();
+					CC_2.clearPanicWarn();
 					//reset main window
 				}else if(!warning.get(1) && x.get(1))
 				{
@@ -394,7 +394,7 @@ public class MainWindow implements ActionListener{
 					warning.clear(2);
 					CC_3.clearTempWarn();
 					CC_3.clearHRWarn();
-					CC_4.clearPanic();
+					CC_3.clearPanicWarn();
 					//reset main window
 				}else if(!warning.get(2) && x.get(2))
 				{
@@ -414,7 +414,7 @@ public class MainWindow implements ActionListener{
 					warning.clear(3);
 					CC_4.clearTempWarn();
 					CC_4.clearHRWarn();
-					CC_4.clearPanic();
+					CC_4.clearPanicWarn();
 					//reset main window
 				}else if(!warning.get(3) && x.get(3))
 				{
