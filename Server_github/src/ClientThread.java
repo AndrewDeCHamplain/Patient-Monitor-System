@@ -1,50 +1,38 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.net.Socket;
 
 
 public class ClientThread extends Thread{
         
-    private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    @SuppressWarnings("unused")
+	private Thread thread;
     private int Pinum;
     private Client_Pi who;
     private String fromClient;
     private MainWindow gui;
     DatagramSocket sendSocket, receiveSocket;
     DatagramPacket sendPacket, receivePacket;
-    private int t;
     private String IP;
-    private String temp;
-    private String hr;
-    private String warn;
     private int port;
+    private int cameraAttached;
 
-    public ClientThread(Socket clientsocket, int i, Client_Pi who, MainWindow gui, String IP, int port) throws IOException
+    public ClientThread(Thread clientthread, int i, Client_Pi who, MainWindow gui, String IP, int port, int c) throws IOException
     {
+    	cameraAttached = c;
+    	//System.out.println(who.number());
     	this.port = port;
     	this.IP = IP;
         this.gui = gui;
         this.who = who;
-        this.socket = clientsocket;
+        this.thread = clientthread;
         Pinum = i;
         who.setThread(this);
         
         receiveSocket = new DatagramSocket(port);
         sendSocket = new DatagramSocket();
         
-        t = 0;
-        temp = "";
-        hr = "";
-        warn = "";
-        //in = new BufferedReader(new InputStreamReader(receiveSocket.getInputStream()));
-        //out = new PrintWriter(socket.getOutputStream(), true);
     }
         
     public void run()
@@ -55,11 +43,11 @@ public class ClientThread extends Thread{
                 e.printStackTrace();
         }                
     }
-        
-        //a loop to keep receiving
+    
+    //a loop to keep receiving
     public void receive() throws IOException, InterruptedException
     {
-
+    	System.out.println("setup connection");
         byte[] buf = new byte[1024];
         receivePacket = new DatagramPacket(buf, 1024);
         
@@ -67,105 +55,103 @@ public class ClientThread extends Thread{
     	sendPacket = new DatagramPacket(text.getBytes(), text.length(), InetAddress.getByName(IP), port);
         //setup delimiter
         who.setURL(IP);
-        //System.out.println(socket.getRemoteSocketAddress().toString());
+        who.setPort(port, cameraAttached);
                         
         String delims = " ";
-        //sendPacket.setData("start".getBytes());
         receiveSocket.send(sendPacket);
-        
         	
+        Thread.sleep(10);
         receiveSocket.receive(receivePacket);
         fromClient = new String(buf);
+        who.startVideo(cameraAttached);
         while(!(fromClient).equals("disconnect"))
         {
         	System.out.println(fromClient);
         	String[] tokens = fromClient.split(delims);
-        	//System.out.println(tokens[0]);
         	String HeartRate = "", Temperature = "";
-        	
-        	for (int i = 0; i < 5;i += 2) 
-        	{
-        		String statusType = tokens[i];
-        		System.out.println(tokens[i]);
-        		if (statusType.equals("temp")) 
-        		{
-        			//if it is a temperature, set the new temperature value
-        			Temperature = tokens[i + 1];
-        			who.setTempText(Temperature);
-        		}else if (statusType.equals("hr"))
-        		{
-                	HeartRate = tokens[i + 1];
-                	who.setHRText(HeartRate);
-                }else if (statusType.equals("warning")) 
-                {
-                	for(int t = 1; t < 3;t++)
-                	{
-                		String warningType = tokens[i + t];
-                		if (warningType.equals("clear")) 
-                		{
-                			//clear the warnings
-                			if(t == 1)
-                			{
-                				//do nothing, temp clear received
-                				//who.clearTempWarn();
-                			}else if(t == 2)
-                			{
-                				//do nothing, hr clear received
-                				//who.clearHRWarn();
-                			}else if(t == 3)
-                			{
-                				//do nothing, panic clear received
-                			}
-                		}else
-                		{
+
+            if(fromClient.equals("starting"))
+            {
+            	//if starting is received, then loop around
+            	//and receive another packet
+            }else
+            {
+            	for (int i = 0; i < 5;i += 2) 
+            	{
+            		String statusType = tokens[i];
+            		if (statusType.equals("temp")) 
+            		{
+            			//if it is a temperature, set the new temperature value
+            			Temperature = tokens[i + 1];
+            			who.setTempText(Temperature);
+            		}else if (statusType.equals("hr"))
+            		{
+            			HeartRate = tokens[i + 1];
+            			who.setHRText(HeartRate);
+            		}else if (statusType.equals("warning")) 
+            		{
+            			for(int t = 1; t <= 3;t++)
+            			{
+            				String warningType = tokens[i + t];
+            				if (warningType.equals("clear")) 
+            				{
+            					//clear the warnings
+            					if(t == 1)
+            					{
+            						//do nothing, temp clear received
+            					}else if(t == 2)
+            					{
+            						//do nothing, hr clear received
+            					}else if(t == 3)
+            					{
+            						who.clearPanicWarn();
+            						//clear panic received
+            					}
+            				}else
+            				{
                     	
-                        	if (tokens[i+t].equals("temp")) 
-                        	{
-                        		who.setTempWarn();
-                        		/*
-                        		 * Set the temperature warning field
-                        		 * You will need a separate field in the GUI
-                                 */
-                            }else if (tokens[i+t].equals("hr")) 
-                            {
-                            	who.setHRWarn();
-                                 /*
-                                   * Set the Heart Rate warning field
-                                   * You will need a separate field in the GUI
-                                   * This code is written to allow for modularity,
-                                   * so display multiple warnings if applicable
-                                   * Another warning type should only require one more else if loop in this code
-                                   */
-                             }else if (tokens[i+t].equals("panic"))
-                             {
+            					if (tokens[i+t].equals("temp")) 
+            					{
+            						who.setTempWarn();
+            						/*
+            						 * Set the temperature warning field
+            						 * You will need a separate field in the GUI
+            						 */
+            					}else if (tokens[i+t].equals("hr")) 
+            					{
+            						who.setHRWarn();
+            						/*
+            						 * Set the Heart Rate warning field
+            						 * You will need a separate field in the GUI
+            						 * This code is written to allow for modularity,
+            						 * so display multiple warnings if applicable
+            						 * Another warning type should only require one more else if loop in this code
+            						 */
+            					}else if (tokens[i+t].equals("panic"))
+            					{
                             	  	//add panic button logic
                          			who.setPanicWarn();
-                             }else
-                             {
-                                   System.out.println("Unexpected Warning Type: " + tokens[i + t]);
-                             }
-                         }
-                     }
-                }else 
-                {
-                      System.out.println("Unexpected Status Type: " + statusType);
+            					}else
+            					{
+            						System.out.println("Unexpected Warning Type: " + tokens[i + t]);
+            					}
+            				}
+            			}
+            		}else
+            		{
+            			System.out.println("Unexpected Status Type: " + statusType);
                       break;
-                }
+            		}
+            	}
                 /*
                  * Get another status string array here to reiterate loop
                  */
-                //fromClient = in.readLine();
-                //out.println("received");
-                }
+                
+                
         		who.hold();
         		receiveSocket.receive(receivePacket);
                 fromClient =  new String(buf);
-        		//byte[] temp = new byte[1];
-        		
-        		//sendPacket = new DatagramPacket(temp, 1, InetAddress.getByName("10.0.0.21"), 8081);
-        		//sendSocket.send(sendPacket);
-                //out.println("start");        
-    		       
+            }
     		}
         	disconnect();
         }
@@ -173,23 +159,18 @@ public class ClientThread extends Thread{
         //disconnects the client and closes the frame
         public void disconnect() throws IOException
         {
-                out.println("disconnect");
-                in.close();
-                out.close();
-                socket.close();
-                gui.DisconnectPi(Pinum);
-                
-                
+        	receiveSocket.close();
+        	sendSocket.close();
+            Thread.currentThread().interrupt();
+            gui.DisconnectPi(Pinum);     
         }
         
         //sends the disconnect command
-        public void stopConnection() throws IOException
+        public UncaughtExceptionHandler stopConnection() throws IOException
         {
-                out.println("disconnect");
-                in.close();
-                out.close();
-                socket.close();
+        	receiveSocket.close();
+        	sendSocket.close();
+            Thread.currentThread().interrupt();
+			return null;
         }
-        
-
 }
