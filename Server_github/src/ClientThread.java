@@ -3,11 +3,16 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-
+/**
+ * The ClientThread class is actually run server-side and it interfaces directly with clientpi.py
+ * A new ClientThread is created for every Pi that connects to the server. It sets up the connection
+ * with the Pi and receives messages containing patient status. It then parses the messages and sends
+ * information to the Client_Pi GUI class to be displayed on screen.
+ */
 public class ClientThread extends Thread{
         
     @SuppressWarnings("unused")
-	private Thread thread;
+    private Thread thread;
     private int Pinum;
     private Client_Pi who;
     private String fromClient;
@@ -17,11 +22,13 @@ public class ClientThread extends Thread{
     private String IP;
     private int port;
     private int cameraAttached;
-
+    
+	/**
+	 * Constructor for ClientThread. Initializes the variables for the GUI and sets up a UDP socket.
+	 */
     public ClientThread(Thread clientthread, int i, Client_Pi who, MainWindow gui, String IP, int port, int c) throws IOException
     {
     	cameraAttached = c;
-    	//System.out.println(who.number());
     	this.port = port;
     	this.IP = IP;
         this.gui = gui;
@@ -34,7 +41,10 @@ public class ClientThread extends Thread{
         sendSocket = new DatagramSocket();
         
     }
-        
+    /**
+     * run() is necessary because threads in Java require a run() function.
+     * It basically just attempts to call the receive() function, So it makes the formatting a little cleaner.
+     */
     public void run()
     {
         try {
@@ -44,7 +54,13 @@ public class ClientThread extends Thread{
         }                
     }
     
-    //a loop to keep receiving
+    /**
+     * After a connection has been opened with a client, ClientThread will loop in the receive() function
+     * until it receives a disconnect message from the client.
+     * The message it continuously receives from the client is 8 words long and formatted as such:
+     * "temp <temperature value> hr <heart rate value> warning <value1> <value2> <value3>"
+     * where the warning values are either "clear", "hr", "temp" or "panic". "clear" means no warning is set.
+     */
     public void receive() throws IOException, InterruptedException
     {
     	System.out.println("setup connection");
@@ -113,20 +129,11 @@ public class ClientThread extends Thread{
             					if (tokens[i+t].equals("temp")) 
             					{
             						who.setTempWarn();
-            						/*
-            						 * Set the temperature warning field
-            						 * You will need a separate field in the GUI
-            						 */
+            			
             					}else if (tokens[i+t].equals("hr")) 
             					{
             						who.setHRWarn();
-            						/*
-            						 * Set the Heart Rate warning field
-            						 * You will need a separate field in the GUI
-            						 * This code is written to allow for modularity,
-            						 * so display multiple warnings if applicable
-            						 * Another warning type should only require one more else if loop in this code
-            						 */
+            					
             					}else if (tokens[i+t].equals("panic"))
             					{
                             	  	//add panic button logic
@@ -143,10 +150,6 @@ public class ClientThread extends Thread{
                       break;
             		}
             	}
-                /*
-                 * Get another status string array here to reiterate loop
-                 */
-                
                 
         		who.hold();
         		receiveSocket.receive(receivePacket);
@@ -156,7 +159,9 @@ public class ClientThread extends Thread{
         	disconnect();
         }
         
-        //disconnects the client and closes the frame
+        /**
+         * When the client sends a disconnect message, this method is run and the thread is closed
+         */
         public void disconnect() throws IOException
         {
         	receiveSocket.close();
@@ -165,12 +170,13 @@ public class ClientThread extends Thread{
             gui.DisconnectPi(Pinum);     
         }
         
-        //sends the disconnect command
-        public UncaughtExceptionHandler stopConnection() throws IOException
+        /**
+         * This method works the same as disconnect() except that the GUI is not updated
+         */ 
+        public void stopConnection() throws IOException
         {
         	receiveSocket.close();
         	sendSocket.close();
             Thread.currentThread().interrupt();
-			return null;
         }
 }
