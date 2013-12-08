@@ -15,7 +15,6 @@ import com.sun.jna.NativeLibrary;
 public class Setup
 {        
     private static MainWindow gui;
-    private static Thread client;
     private static Thread client_1;
     private static Thread client_2;
     private static Thread client_3;
@@ -71,7 +70,7 @@ public class Setup
     //connects a new thread that will talk to the clients
     public static void Connect(int i, Client_Pi who) throws IOException
     {
-        new ClientThread(client, i, who, gui, IP.get(i-1), port.get(i-1), camera.get(i-1)).start();
+        new ClientThread(i, who, gui, IP.get(i-1), port.get(i-1), camera.get(i-1)).start();
     }
    
     //parses the xml and returns a string that consists of the 
