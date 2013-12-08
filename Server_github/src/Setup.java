@@ -7,7 +7,11 @@ import uk.co.caprica.vlcj.runtime.RuntimeUtil;
 import com.sun.jna.Native;
 import com.sun.jna.NativeLibrary;
 
-
+/**
+ * The Setup class is the very first program run when starting up the server.
+ * It keeps track of each ClientThread object and stores IP addresses and ports used in arraylists.
+ * It also calls a function from the XML parser to receive information from the patient info document.
+ */ 
 public class Setup
 {        
     private static MainWindow gui;
@@ -22,7 +26,10 @@ public class Setup
     private static ArrayList<Integer> camera;
 
  
-        
+    /**
+     * This is the start-up code for the system.
+     * It sets up vlcj for video playback before running the main setup method
+     */
     public static void main(String[] args) throws IOException
     {
     	
@@ -35,7 +42,9 @@ public class Setup
         Setup hub = new Setup();
     }
         
-    //sets up the server side of the program
+    /**
+     * Initializes the IP and port arraylists. Initializes the GUI and XML parser.
+     */
     public Setup() throws IOException
     {
     	//very inefficient way to setup the clients
