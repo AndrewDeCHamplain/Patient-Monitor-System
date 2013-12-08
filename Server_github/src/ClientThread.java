@@ -12,7 +12,6 @@ import java.net.InetAddress;
 public class ClientThread extends Thread{
         
     @SuppressWarnings("unused")
-    private Thread thread;
     private int Pinum;
     private Client_Pi who;
     private String fromClient;
@@ -26,14 +25,13 @@ public class ClientThread extends Thread{
 	/**
 	 * Constructor for ClientThread. Initializes the variables for the GUI and sets up a UDP socket.
 	 */
-    public ClientThread(Thread clientthread, int i, Client_Pi who, MainWindow gui, String IP, int port, int c) throws IOException
+    public ClientThread(int i, Client_Pi who, MainWindow gui, String IP, int port, int c) throws IOException
     {
     	cameraAttached = c;
     	this.port = port;
     	this.IP = IP;
         this.gui = gui;
         this.who = who;
-        this.thread = clientthread;
         Pinum = i;
         who.setThread(this);
         
