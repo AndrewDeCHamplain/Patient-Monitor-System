@@ -15,9 +15,9 @@ public class DigitalClock extends JPanel{
     String stringTime;
     int hour, minute, second;
 
-    String correctionHour = "";
-    String correctionMinute = "";
-    String correctionSecond = "";
+    private String correctionHour = "";
+    private String correctionMinute = "";
+    private String correctionSecond = "";
 
     public void setStringTime(String xyz) {
         this.stringTime = xyz;
