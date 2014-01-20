@@ -1,0 +1,7 @@
+<configuration>
+	<ipaddress>10.0.0.21</ipaddress>
+	<camera>TRUE</camera>
+	<heartmon>FALSE</heartmon>
+	<tempmon>TRUE</tempmon>
+  <server>10.0.0.200</server>
+</configuration>
